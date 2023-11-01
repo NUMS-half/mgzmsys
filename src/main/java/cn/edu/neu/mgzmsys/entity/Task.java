@@ -2,47 +2,46 @@ package cn.edu.neu.mgzmsys.entity;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import lombok.Getter;
-import lombok.Setter;
+
+import lombok.Data;
 
 /**
  * <p>
- * 
+ *
  * </p>
  *
  * @author team15
  * @since 2023-11-01
  */
-@Getter
-@Setter
-  public class Task implements Serializable {
+@Data
+public class Task implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-      /**
+    /**
      * 任务id
      */
-        private String taskID;
+    private String taskID;
 
-      /**
+    /**
      * 任务名称
      */
-      private String taskName;
+    private String taskName;
 
-      /**
+    /**
      * 创建时间
      */
-      private LocalDateTime createAt;
+    private LocalDateTime createAt;
 
-      /**
+    /**
      * 截止时间
      */
-      private LocalDateTime deadline;
+    private LocalDateTime deadline;
 
-      /**
+    /**
      * 任务描述
      */
-      private String decription;
+    private String decription;
 
 
 }
