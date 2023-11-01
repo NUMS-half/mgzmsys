@@ -1,0 +1,35 @@
+server:
+  port: 8080
+# DataSource Config
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://39.101.65.147:3306/mgzmsys?characterEncoding=utf-8&autoReconnect=true&failOverReadOnly=false&allowMultiQueries=true
+    username: msn
+    password: password
+  jackson:
+    time-zone: Asia/Shanghai
+    date-format: yyyy-MM-dd HH:mm:ss
+    serialization:
+      write-dates-as-timestamps: false
+  web:
+    resources:
+      static-locations: classpath:static/,file:static/
+mybatis-plus:
+  type-aliases-package: cn.edu.neu.mgzmsys.entity
+  configuration:
+    call-setters-on-nulls: false
+    map-underscore-to-camel-case: true
+    auto-mapping-behavior: full
+  mapper-locations: classpath:mapper/**/**Mapper.xml
+  global-config:
+    banner: true
+    db-config:
+      id-type: assign_uuid
+      logic-delete-value: 0
+      logic-not-delete-value: 1
+
+logging:
+  level:
+    root: info
+
