@@ -41,7 +41,7 @@ public class Task implements Serializable {
     /**
      * 任务描述
      */
-    private String decription;
+    private String description;
 
 
 }
