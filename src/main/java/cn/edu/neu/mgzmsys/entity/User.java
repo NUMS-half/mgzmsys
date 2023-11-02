@@ -1,6 +1,8 @@
 package cn.edu.neu.mgzmsys.entity;
 
 import java.io.Serializable;
+
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -12,8 +14,7 @@ import lombok.Setter;
  * @author team15
  * @since 2023-11-02
  */
-@Getter
-@Setter
+@Data
 public class User implements Serializable {
 
     private static final long serialVersionUID = 1L;
