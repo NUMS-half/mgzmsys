@@ -2,6 +2,8 @@ package cn.edu.neu.mgzmsys.entity;
 
 import java.io.Serializable;
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
 import lombok.Data;
 
 /**
@@ -20,6 +22,7 @@ public class Conversation implements Serializable {
     /**
      * 会话id
      */
+    @TableId(value = "conversation_id",type= IdType.ASSIGN_UUID)
     private String conversationId;
 
     /**

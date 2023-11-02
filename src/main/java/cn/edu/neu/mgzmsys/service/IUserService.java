@@ -1,9 +1,7 @@
 package cn.edu.neu.mgzmsys.service;
 
-import cn.edu.neu.mgzmsys.entity.Task;
+import cn.edu.neu.mgzmsys.entity.User;
 import com.baomidou.mybatisplus.extension.service.IService;
-
-import java.util.List;
 
 /**
  * <p>
@@ -13,5 +11,6 @@ import java.util.List;
  * @author team15
  * @since 2023-11-02
  */
-public interface ITaskService extends IService<Task> {
+public interface IUserService extends IService<User> {
+
 }

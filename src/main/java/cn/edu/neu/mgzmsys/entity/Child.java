@@ -3,6 +3,8 @@ package cn.edu.neu.mgzmsys.entity;
 import java.io.Serializable;
 import java.time.LocalDate;
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
 import lombok.Data;
 
 /**
@@ -21,17 +23,8 @@ public class Child implements Serializable {
     /**
      * 儿童唯一标识的id
      */
+    @TableId(value = "child_id",type= IdType.ASSIGN_UUID)
     private String childId;
-
-    /**
-     * 账号
-     */
-    private String username;
-
-    /**
-     * 账户密码
-     */
-    private String password;
 
     /**
      * 儿童姓名

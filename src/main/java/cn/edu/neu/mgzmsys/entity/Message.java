@@ -3,6 +3,8 @@ package cn.edu.neu.mgzmsys.entity;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
 import lombok.Data;
 
 /**
@@ -21,6 +23,7 @@ public class Message implements Serializable {
     /**
      * 消息id
      */
+      @TableId(value = "message_id",type= IdType.ASSIGN_UUID)
     private String messageId;
 
     /**
