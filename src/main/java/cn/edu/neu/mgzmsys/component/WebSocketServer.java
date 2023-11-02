@@ -21,11 +21,10 @@ import java.util.concurrent.ConcurrentHashMap;
 @Component
 public class WebSocketServer {
 
+    // 日志记录器
     private static final Logger log = LoggerFactory.getLogger(WebSocketServer.class);
 
-    /**
-     * 记录当前在线连接数(客户端个数)
-     */
+    // 记录当前在线连接数(客户端个数)
     protected static final Map<String, Session> sessionMap = new ConcurrentHashMap<>();
 
     /**
@@ -34,7 +33,7 @@ public class WebSocketServer {
     @OnOpen
     public void onOpen(Session session, @PathParam("username") String username) {
         sessionMap.put(username, session);
-        log.info("有新用户加入，username={}, 当前在线人数为：{}", username, sessionMap.size());
+        log.info("有新用户(username:{})加入, 当前在线总人数为:{}", username, sessionMap.size());
         JSONObject result = new JSONObject();
         JSONArray array = new JSONArray();
         result.set("users", array);
@@ -43,7 +42,7 @@ public class WebSocketServer {
             jsonObject.set("username", key);
                   array.add(jsonObject);
         }
-        sendAllMessage(JSONUtil.toJsonStr(result));  // 后台发送消息给所有的客户端
+        sendAllMessage(JSONUtil.toJsonStr(result));  // 服务器发送消息给所有的客户端
     }
 
     /**
@@ -52,7 +51,7 @@ public class WebSocketServer {
     @OnClose
     public void onClose(Session session, @PathParam("username") String username) {
         sessionMap.remove(username);
-        log.info("有一连接关闭，移除username={}的用户session, 当前在线人数为：{}", username, sessionMap.size());
+        log.info("有一连接关闭，移除username={}的用户session, 当前在线总人数为:{}", username, sessionMap.size());
     }
 
     /**
@@ -64,7 +63,7 @@ public class WebSocketServer {
      */
     @OnMessage
     public void onMessage(String message, Session session, @PathParam("username") String username) {
-        log.info("服务端收到用户username={}的消息:{}", username, message);
+        log.info("服务端收到用户(username:{})的消息:{}", username, message);
         JSONObject obj = JSONUtil.parseObj(message);
         String toUsername = obj.getStr("to"); // to表示发送给哪个用户，比如 admin
         String text = obj.getStr("text"); // 发送的消息文本  hello
@@ -76,9 +75,9 @@ public class WebSocketServer {
             jsonObject.set("from", username);  // from 是 zhang
             jsonObject.set("text", text);  // text 同上面的text
             this.sendMessage(jsonObject.toString(), toSession);
-            log.info("发送给用户username={}，消息：{}", toUsername, jsonObject);
+            log.info("发送给用户(username:{}), 消息:{}", toUsername, jsonObject);
         } else {
-            log.info("发送失败，未找到用户username={}的session", toUsername);
+            log.info("发送失败，未找到用户(username:{})的session", toUsername);
         }
     }
 
@@ -89,28 +88,28 @@ public class WebSocketServer {
     }
 
     /**
-     * 服务端发送消息给客户端
+     * 服务器发送消息给客户端
      */
     private void sendMessage(String message, Session toSession) {
         try {
-            log.info("服务端给客户端[{}]发送消息{}", toSession.getId(), message);
+            log.info("服务器给客户端[{}]发送消息{}", toSession.getId(), message);
             toSession.getBasicRemote().sendText(message);
         } catch (Exception e) {
-            log.error("服务端发送消息给客户端失败", e);
+            log.error("服务器发送消息给客户端失败", e);
         }
     }
 
     /**
-     * 服务端发送消息给所有客户端
+     * 服务器发送消息给所有客户端
      */
     private void sendAllMessage(String message) {
         try {
             for (Session session : sessionMap.values()) {
-                log.info("服务端给客户端[{}]发送消息{}", session.getId(), message);
+                log.info("服务器给客户端[{}]发送消息{}", session.getId(), message);
                 session.getBasicRemote().sendText(message);
             }
         } catch (Exception e) {
-            log.error("服务端发送消息给客户端失败", e);
+            log.error("服务器发送消息给客户端失败", e);
         }
     }
 }
