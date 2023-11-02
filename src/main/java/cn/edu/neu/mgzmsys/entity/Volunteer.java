@@ -3,6 +3,8 @@ package cn.edu.neu.mgzmsys.entity;
 import java.io.Serializable;
 import java.time.LocalDate;
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
 import lombok.Data;
 
 /**
@@ -21,17 +23,10 @@ public class Volunteer implements Serializable {
     /**
      * 志愿者id
      */
-    private String id;
+      @TableId(value = "id",type= IdType.ASSIGN_UUID)
+    private String volunteerId;
 
-    /**
-     * 用户名
-     */
-    private String username;
 
-    /**
-     * 密码
-     */
-    private String password;
 
     /**
      * 志愿者姓名
