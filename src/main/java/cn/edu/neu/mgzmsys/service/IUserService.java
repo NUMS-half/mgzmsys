@@ -1,6 +1,6 @@
 package cn.edu.neu.mgzmsys.service;
 
-import cn.edu.neu.mgzmsys.entity.Volunteer;
+import cn.edu.neu.mgzmsys.entity.User;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 /**
@@ -11,6 +11,6 @@ import com.baomidou.mybatisplus.extension.service.IService;
  * @author team15
  * @since 2023-11-02
  */
-public interface IVolunteerService extends IService<Volunteer> {
+public interface IUserService extends IService<User> {
 
 }

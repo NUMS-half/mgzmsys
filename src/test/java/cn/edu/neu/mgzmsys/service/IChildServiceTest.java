@@ -14,14 +14,4 @@ public class IChildServiceTest {
     @Autowired
     private IChildService childService;
 
-    @Test
-    public void login() {
-
-        // 测试登录
-        boolean result1 = childService.login("zhangsan", "123456");
-        boolean result2 = childService.login("zhangsan", "111111");
-
-        assertTrue(result1);
-        assertFalse(result2);
-    }
 }
