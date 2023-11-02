@@ -23,4 +23,19 @@ public class VolunteerServiceImpl extends ServiceImpl<VolunteerMapper, Volunteer
     @Resource
     VolunteerMapper volunteerMapper;
 
+    /**
+     * 登录验证业务
+     * @return 是否成功
+     */
+    @Override
+    public boolean login(String username, String password) {
+
+        // 通过用户名查询用户
+        LambdaQueryWrapper<Volunteer> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+        lambdaQueryWrapper.eq(username != null, Volunteer::getUsername, username);
+        Volunteer volunteer = volunteerMapper.selectOne(lambdaQueryWrapper);
+
+        // 判断用户是否存在，存在则判断密码是否正确
+        return volunteer != null && volunteer.getPassword().equals(password);
+    }
 }

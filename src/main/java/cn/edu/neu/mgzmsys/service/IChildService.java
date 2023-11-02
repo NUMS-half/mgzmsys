@@ -13,4 +13,9 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface IChildService extends IService<Child> {
 
+    /**
+     * 登录验证业务
+     * @return 是否成功
+     */
+    boolean login(String username, String password);
 }
