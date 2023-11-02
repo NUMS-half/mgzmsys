@@ -3,8 +3,13 @@ package cn.edu.neu.mgzmsys.service.impl;
 import cn.edu.neu.mgzmsys.entity.Conversation;
 import cn.edu.neu.mgzmsys.mapper.ConversationMapper;
 import cn.edu.neu.mgzmsys.service.IConversationService;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
+
+import javax.annotation.Resource;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * <p>
@@ -16,5 +21,27 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class ConversationServiceImpl extends ServiceImpl<ConversationMapper, Conversation> implements IConversationService {
+    @Resource
+    ConversationMapper conversationMapper;
+    /**
+     *
+     * @param map
+     * @return
+     */
+    @Override
+    public boolean setupConversation(Map<String, String> map) {
+        LambdaQueryWrapper<Conversation> lambdaQueryWrapper=new LambdaQueryWrapper<>();
+        lambdaQueryWrapper.and(i->i.eq(Conversation::getParticipantOneId,map.get("participation1")).eq(Conversation::getParticipantTwoId,map.get("participation2")))
+                .or(i->i.eq(Conversation::getParticipantTwoId,map.get("participation1")).eq(Conversation::getParticipantOneId,map.get("participation2")));
+        Conversation conversation=conversationMapper.selectOne(lambdaQueryWrapper);
+        if (conversation!=null)
+            return false;
 
+        conversation=new Conversation();
+        conversation.setParticipantOneId(map.get("participation1"));
+        conversation.setParticipantTwoId(map.get("participation2"));
+        conversationMapper.insert(conversation);
+        return true;
+
+    }
 }

@@ -3,6 +3,8 @@ package cn.edu.neu.mgzmsys.service;
 import cn.edu.neu.mgzmsys.entity.Conversation;
 import com.baomidou.mybatisplus.extension.service.IService;
 
+import java.util.Map;
+
 /**
  * <p>
  *  服务类
@@ -12,5 +14,5 @@ import com.baomidou.mybatisplus.extension.service.IService;
  * @since 2023-11-02
  */
 public interface IConversationService extends IService<Conversation> {
-
+ boolean setupConversation(Map<String,String> map);
 }

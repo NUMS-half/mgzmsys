@@ -12,10 +12,9 @@ import com.baomidou.mybatisplus.extension.service.IService;
  * @since 2023-11-02
  */
 public interface IChildService extends IService<Child> {
-
     /**
-     * 登录验证业务
-     * @return 是否成功
+     * 查询儿童信息
+     * @return 儿童信息
      */
-    boolean login(String username, String password);
+    Child selectChildInfo(String id);
 }
