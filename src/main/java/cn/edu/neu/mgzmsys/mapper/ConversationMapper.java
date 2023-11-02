@@ -9,7 +9,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  * </p>
  *
  * @author team15
- * @since 2023-11-01
+ * @since 2023-11-02
  */
 public interface ConversationMapper extends BaseMapper<Conversation> {
 

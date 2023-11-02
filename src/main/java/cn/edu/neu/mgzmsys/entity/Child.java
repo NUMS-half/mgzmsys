@@ -11,7 +11,7 @@ import lombok.Data;
  * </p>
  *
  * @author team15
- * @since 2023-11-01
+ * @since 2023-11-02
  */
 @Data
 public class Child implements Serializable {
@@ -21,7 +21,7 @@ public class Child implements Serializable {
     /**
      * 儿童唯一标识的id
      */
-    private String id;
+    private String childID;
 
     /**
      * 账号

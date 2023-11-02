@@ -7,11 +7,11 @@ import lombok.Data;
 
 /**
  * <p>
- *
+ * 
  * </p>
  *
  * @author team15
- * @since 2023-11-01
+ * @since 2023-11-02
  */
 @Data
 public class Volunteer implements Serializable {
