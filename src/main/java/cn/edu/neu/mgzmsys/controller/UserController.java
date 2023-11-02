@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
+import java.util.Map;
 
 /**
  * <p>
@@ -47,6 +48,37 @@ public class UserController {
             httpResponseEntity.setCode("-1");
             httpResponseEntity.setData(null);
             httpResponseEntity.setMessage("登录时发生异常，请稍后重试");
+        }
+        return httpResponseEntity;
+    }
+
+    @PostMapping(value = "/register", headers = "Accept=application/json")
+    public HttpResponseEntity register(@RequestBody Map<String, Object> map) {
+        HttpResponseEntity httpResponseEntity = new HttpResponseEntity();
+        try{
+            if ( map == null ) {
+                throw new NullPointerException();
+            }
+            String type = (String) map.get("type");
+            if ( type.equals("child") ) {
+                // 注册儿童
+                httpResponseEntity.setCode("1");
+                httpResponseEntity.setData(null);
+                httpResponseEntity.setMessage("注册成功");
+            } else if ( type.equals("volunteer") ) {
+                // 注册志愿者
+                httpResponseEntity.setCode("1");
+                httpResponseEntity.setData(null);
+                httpResponseEntity.setMessage("注册成功");
+            } else {
+                httpResponseEntity.setCode("0");
+                httpResponseEntity.setData(null);
+                httpResponseEntity.setMessage("注册失败");
+            }
+        } catch ( Exception e ) {
+            httpResponseEntity.setCode("-1");
+            httpResponseEntity.setData(null);
+            httpResponseEntity.setMessage("注册时发生异常，请稍后重试");
         }
         return httpResponseEntity;
     }

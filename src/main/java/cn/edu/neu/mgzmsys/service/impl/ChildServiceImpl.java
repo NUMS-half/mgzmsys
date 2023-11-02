@@ -23,5 +23,10 @@ public class ChildServiceImpl extends ServiceImpl<ChildMapper, Child> implements
     @Resource
     ChildMapper childMapper;
 
-
+    @Override
+    public Child selectChildInfo(String id) {
+        LambdaQueryWrapper<Child> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(Child::getUserId, id);
+        return childMapper.selectOne(wrapper);
+    }
 }
