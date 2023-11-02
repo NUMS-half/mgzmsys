@@ -22,4 +22,7 @@ public class VolunteerServiceImpl extends ServiceImpl<VolunteerMapper, Volunteer
 
     @Resource
     VolunteerMapper volunteerMapper;
+
+
+
 }

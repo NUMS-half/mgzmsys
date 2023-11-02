@@ -12,5 +12,9 @@ import com.baomidou.mybatisplus.extension.service.IService;
  * @since 2023-11-02
  */
 public interface IChildService extends IService<Child> {
-
+    /**
+     * 查询儿童信息
+     * @return 儿童信息
+     */
+    Child selectChildInfo(String id);
 }
