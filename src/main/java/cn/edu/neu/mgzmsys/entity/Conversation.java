@@ -20,17 +20,17 @@ public class Conversation implements Serializable {
     /**
      * 会话id
      */
-    private String conversationID;
+    private String conversationId;
 
     /**
      * 参与者1
      */
-    private String participantOneID;
+    private String participantOneId;
 
     /**
      * 参与者2
      */
-    private String participantTwoID;
+    private String participantTwoId;
 
 
 }

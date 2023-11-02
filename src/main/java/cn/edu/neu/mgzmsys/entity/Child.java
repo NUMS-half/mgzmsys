@@ -21,7 +21,7 @@ public class Child implements Serializable {
     /**
      * 儿童唯一标识的id
      */
-    private String childID;
+    private String childId;
 
     /**
      * 账号

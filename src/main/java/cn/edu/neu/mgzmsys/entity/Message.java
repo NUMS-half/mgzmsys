@@ -21,22 +21,22 @@ public class Message implements Serializable {
     /**
      * 消息id
      */
-    private String messageID;
+    private String messageId;
 
     /**
      * 会话id
      */
-    private String conversationID;
+    private String conversationId;
 
     /**
      * 收件人id
      */
-    private String receiveID;
+    private String receiveId;
 
     /**
      * 发送人id
      */
-    private String posterID;
+    private String posterId;
 
     /**
      * 消息类型
