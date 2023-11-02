@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>明光筑梦 - 少年强国项目</title>
+    <style>
+        .message-container {
+            display: flex;
+            justify-content: space-between;
+        }
+        .sent-message, .received-message {
+            max-width: 45%;
+            padding: 10px;
+            margin: 5px;
+            border-radius: 10px;
+        }
+        .sent-message {
+            background-color: #cceeff;
+            align-self: flex-start;
+        }
+        .received-message {
+            background-color: #ffd700;
+            align-self: flex-end;
+        }
+    </style>
+</head>
+<body>
+<h1>明光筑梦 - 少年强国项目</h1>
+
+<div id="messageArea" style="border: 1px solid #ccc; padding: 10px; height: 300px; overflow-y: scroll;"></div>
+
+<div class="message-container">
+    <input type="text" id="messageInput" style="width: 80%; margin-top: 10px;">
+    <button onclick="sendMessage()">发送消息</button>
+</div>
+
+<script>
+
+
+    const socket = new WebSocket('ws://localhost:8080/ws');
+
+    socket.addEventListener('open', (event) => {
+        console.log('WebSocket 连接已打开');
+    });
+
+    socket.addEventListener('message', (event) => {
+        console.log('接收到服务器消息：', event.data);
+        displayMessage(event.data);
+    });
+
+    socket.addEventListener('close', (event) => {
+        console.log('WebSocket 连接已关闭');
+    });
+    function sendMessage() {
+        var messageInput = document.getElementById("messageInput");
+        var message = messageInput.value;
+
+        var now = new Date();
+        var hours = now.getHours().toString().padStart(2, '0');
+        var minutes = now.getMinutes().toString().padStart(2, '0');
+        var seconds = now.getSeconds().toString().padStart(2, '0');
+
+        var username = `[${hours}:${minutes}:${seconds}]`;
+
+        var formattedMessage = `${username}: ${message}`; // 添加当前时间作为标识
+
+        if (socket.readyState !== WebSocket.OPEN) {
+            console.log('WebSocket连接未打开，尝试重新连接...');
+            createWebSocket(); // 如果WebSocket连接未打开，尝试重新创建连接
+        }
+
+        socket.send(formattedMessage); // 发送消息
+
+        messageInput.value = ""; // 清空输入框
+    }
+    function displayMessage(message) {
+        var messageArea = document.getElementById("messageArea");
+        var newMessage = document.createElement("p");
+        newMessage.textContent = message;
+        newMessage.classList.add('received-message'); // 默认设置为接收消息的样式
+
+        if (message.includes('[Sent by Me]')) {
+            newMessage.classList.remove('received-message');
+            newMessage.classList.add('sent-message'); // 如果消息包含特定标识，设置为发送消息的样式
+        }
+
+        messageArea.appendChild(newMessage);
+    }
+
+    function displaySentMessage(message) {
+        var messageArea = document.getElementById("messageArea");
+        var newMessage = document.createElement("p");
+        newMessage.textContent = message;
+        newMessage.classList.add('sent-message');
+        messageArea.appendChild(newMessage);
+    }
+</script>
+</body>
+</html>
