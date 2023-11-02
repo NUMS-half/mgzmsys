@@ -6,6 +6,7 @@ import java.time.LocalDate;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 /**
  * <p>
@@ -15,16 +16,11 @@ import lombok.Data;
  * @author team15
  * @since 2023-11-02
  */
+@EqualsAndHashCode(callSuper = true)
 @Data
-public class Child implements Serializable {
+public class Child extends User implements Serializable {
 
     private static final long serialVersionUID = 1L;
-
-    /**
-     * 儿童唯一标识的id
-     */
-    @TableId(value = "child_id",type= IdType.ASSIGN_UUID)
-    private String childId;
 
     /**
      * 儿童姓名

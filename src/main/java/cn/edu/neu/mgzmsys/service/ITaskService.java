@@ -4,6 +4,7 @@ import cn.edu.neu.mgzmsys.entity.Task;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -14,4 +15,14 @@ import java.util.List;
  * @since 2023-11-02
  */
 public interface ITaskService extends IService<Task> {
+    /**
+     * 根据儿童id获取任务
+     * @return 任务列表
+     */
+    List<Task> getTaskById(String id);
+    /**
+     * 更新任务
+     * @return 更新是否成功
+     */
+    boolean updateTask(Map<String, Object> map);
 }

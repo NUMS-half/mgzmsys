@@ -22,27 +22,25 @@ public class ChildController {
     @Resource
     private IChildService childService;
 
-    @PostMapping (value = "/login", headers = "Accept=application/json")
-    public HttpResponseEntity login(@RequestBody String username, @RequestBody String password) {
+    /**
+     * 根据儿童id获取儿童信息
+     * @return 儿童信息
+     */
+    @PostMapping(value = "/getChildById", headers = "Accept=application/json")
+    public HttpResponseEntity getChildById(@RequestBody String id) {
         HttpResponseEntity httpResponseEntity = new HttpResponseEntity();
         try{
-            if ( username == null || password == null ) {
+            if ( id == null ) {
                 throw new NullPointerException();
             }
-            boolean login = childService.login(username, password);
-            if ( login ) {
-                httpResponseEntity.setCode("1");
-                httpResponseEntity.setData(null);
-                httpResponseEntity.setMessage("登录成功");
-            } else {
-                httpResponseEntity.setCode("0");
-                httpResponseEntity.setData(null);
-                httpResponseEntity.setMessage("用户名或密码错误");
-            }
+            cn.edu.neu.mgzmsys.entity.Child child = childService.selectChildInfo(id);
+            httpResponseEntity.setCode("1");
+            httpResponseEntity.setData(child);
+            httpResponseEntity.setMessage("获取儿童信息成功");
         } catch ( Exception e ) {
             httpResponseEntity.setCode("-1");
             httpResponseEntity.setData(null);
-            httpResponseEntity.setMessage("登录时发生异常，请稍后重试");
+            httpResponseEntity.setMessage("获取儿童信息时发生异常，请稍后重试");
         }
         return httpResponseEntity;
     }
