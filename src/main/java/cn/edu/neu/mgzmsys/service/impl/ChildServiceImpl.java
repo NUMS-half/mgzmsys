@@ -23,19 +23,5 @@ public class ChildServiceImpl extends ServiceImpl<ChildMapper, Child> implements
     @Resource
     ChildMapper childMapper;
 
-    /**
-     * 登录验证业务
-     * @return 是否成功
-     */
-    @Override
-    public boolean login(String username, String password) {
 
-        // 通过用户名查询用户
-        LambdaQueryWrapper<Child> lambdaQueryWrapper = new LambdaQueryWrapper<>();
-        lambdaQueryWrapper.eq(username != null, Child::getUsername, username);
-        Child child = childMapper.selectOne(lambdaQueryWrapper);
-
-        // 判断用户是否存在，存在则判断密码是否正确
-        return child != null && child.getPassword().equals(password);
-    }
 }
