@@ -1,8 +1,6 @@
 package cn.edu.neu.mgzmsys.entity;
 
 import java.io.Serializable;
-
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -22,6 +20,7 @@ public class User implements Serializable {
     /**
      * userID
      */
+    @TableId(value = "user_id",type = IdType.ASSIGN_UUID)
     private String userId;
 
     /**
