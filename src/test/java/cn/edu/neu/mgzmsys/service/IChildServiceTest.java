@@ -12,14 +12,14 @@ import static org.junit.Assert.*;
 public class IChildServiceTest {
 
     @Autowired
-    private IChildService iChildService;
+    private IChildService childService;
 
     @Test
     public void login() {
 
         // 测试登录
-        boolean result1 = iChildService.login("zhangsan", "123456");
-        boolean result2 = iChildService.login("zhangsan", "111111");
+        boolean result1 = childService.login("zhangsan", "123456");
+        boolean result2 = childService.login("zhangsan", "111111");
 
         assertTrue(result1);
         assertFalse(result2);
