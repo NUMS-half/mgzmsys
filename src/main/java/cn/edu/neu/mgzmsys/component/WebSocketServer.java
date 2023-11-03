@@ -94,6 +94,7 @@ public class WebSocketServer {
     private void sendMessage(String message, Session toSession) {
         try {
             log.info("服务器给客户端[{}]发送消息{}", toSession.getId(), message);
+
             toSession.getBasicRemote().sendText(message);
         } catch ( Exception e ) {
             log.error("服务器发送消息给客户端失败", e);

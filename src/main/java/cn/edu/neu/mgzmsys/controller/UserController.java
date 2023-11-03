@@ -15,7 +15,7 @@ import java.util.Map;
 
 /**
  * <p>
- *  前端控制器
+ * 前端控制器
  * </p>
  *
  * @author team15
@@ -24,13 +24,15 @@ import java.util.Map;
 @RestController
 @RequestMapping("/user")
 public class UserController {
- @Resource
+    @Resource
     private IUserService userService;
 
     @PostMapping(value = "/login", headers = "Accept=application/json")
-    public HttpResponseEntity login(@RequestBody String username, @RequestBody String password) {
+    public HttpResponseEntity login(@RequestBody Map<String, Object> map) {
         HttpResponseEntity httpResponseEntity = new HttpResponseEntity();
-        try{
+        String username = map.get("username").toString();
+        String password = map.get("password").toString();
+        try {
             if ( username == null || password == null ) {
                 throw new NullPointerException();
             }
@@ -55,7 +57,7 @@ public class UserController {
     @PostMapping(value = "/register", headers = "Accept=application/json")
     public HttpResponseEntity register(@RequestBody Map<String, Object> map) {
         HttpResponseEntity httpResponseEntity = new HttpResponseEntity();
-        try{
+        try {
             if ( map == null ) {
                 throw new NullPointerException();
             }

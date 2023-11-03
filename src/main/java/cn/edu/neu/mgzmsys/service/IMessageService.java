@@ -3,6 +3,7 @@ package cn.edu.neu.mgzmsys.service;
 import cn.edu.neu.mgzmsys.entity.Message;
 import com.baomidou.mybatisplus.extension.service.IService;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -15,4 +16,5 @@ import java.util.Map;
  */
 public interface IMessageService extends IService<Message> {
  boolean saveMessage(Map<String,Object> map);
+ List<Message> selectMessage(String connectionId);
 }
