@@ -15,6 +15,11 @@ spring:
   web:
     resources:
       static-locations: classpath:static/,file:static/
+  rabbitmq:
+    host: 47.115.214.12
+    port: 5672
+    username: nums
+    password: 123456
 mybatis-plus:
   type-aliases-package: cn.edu.neu.mgzmsys.entity
   configuration:
@@ -33,4 +38,5 @@ mybatis-plus:
 logging:
   level:
     root: info
+
 

@@ -1,4 +1,4 @@
-package cn.edu.neu.mgzmsys.common.utils;
+package cn.edu.neu.mgzmsys.common.config;
 
 import com.baomidou.mybatisplus.annotation.DbType;
 import com.baomidou.mybatisplus.autoconfigure.ConfigurationCustomizer;
