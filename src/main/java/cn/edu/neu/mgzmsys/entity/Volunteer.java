@@ -23,14 +23,6 @@ public class Volunteer extends User implements Serializable {
     private static final long serialVersionUID = 1L;
 
     /**
-     * 志愿者id
-     */
-      @TableId(value = "id",type= IdType.ASSIGN_UUID)
-    private String volunteerId;
-
-
-
-    /**
      * 志愿者姓名
      */
     private String volunteerName;

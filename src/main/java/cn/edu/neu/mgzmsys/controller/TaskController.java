@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -55,6 +56,7 @@ public class TaskController {
     @PostMapping(value = "/updateTask", headers = "Accept=application/json")
     public HttpResponseEntity updateTask(@RequestBody Map<String, Object> map) {
         HttpResponseEntity httpResponseEntity = new HttpResponseEntity();
+        map.put("finish_at",new Date());
         try{
             if ( map == null ) {
                 throw new NullPointerException();

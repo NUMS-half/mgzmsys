@@ -7,7 +7,7 @@ import org.apache.ibatis.annotations.Mapper;
 import java.util.Map;
 
 @Mapper
-public interface TaskChildMapper extends BaseMapper<TaskChildMapper> {
+public interface TaskChildMapper  {
 
     boolean updateChildTask(Map<String, Object> map);
 }
