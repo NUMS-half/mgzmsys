@@ -28,8 +28,10 @@ public class UserController {
     private IUserService userService;
 
     @PostMapping(value = "/login", headers = "Accept=application/json")
-    public HttpResponseEntity login(@RequestBody String username, @RequestBody String password) {
+    public HttpResponseEntity login(@RequestBody Map<String,Object> map) {
         HttpResponseEntity httpResponseEntity = new HttpResponseEntity();
+        String username=map.get("username").toString();
+        String password=map.get("password").toString();
         try{
             if ( username == null || password == null ) {
                 throw new NullPointerException();
