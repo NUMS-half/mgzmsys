@@ -37,10 +37,10 @@ public class WebSocketServer {
         JSONObject result = new JSONObject();
         JSONArray array = new JSONArray();
         result.set("users", array);
-        for (Object key : sessionMap.keySet()) {
+        for ( Object key : sessionMap.keySet() ) {
             JSONObject jsonObject = new JSONObject();
             jsonObject.set("username", key);
-                  array.add(jsonObject);
+            array.add(jsonObject);
         }
         sendAllMessage(JSONUtil.toJsonStr(result));  // 服务器发送消息给所有的客户端
     }
@@ -59,6 +59,7 @@ public class WebSocketServer {
      * 后台收到客户端发送过来的消息
      * onMessage 是一个消息的中转站
      * 接受 浏览器端 socket.send 发送过来的 json数据
+     *
      * @param message 客户端发送过来的消息
      */
     @OnMessage
@@ -69,7 +70,7 @@ public class WebSocketServer {
         String text = obj.getStr("text"); // 发送的消息文本  hello
         Session toSession = sessionMap.get(toUsername); // 根据 to用户名来获取 session，再通过session发送消息文本
 
-        if (toSession != null) {
+        if ( toSession != null ) {
             // 服务器端 再把消息组装一下，组装后的消息包含发送人和发送的文本内容
             JSONObject jsonObject = new JSONObject();
             jsonObject.set("from", username);  // from 是 zhang
@@ -94,7 +95,7 @@ public class WebSocketServer {
         try {
             log.info("服务器给客户端[{}]发送消息{}", toSession.getId(), message);
             toSession.getBasicRemote().sendText(message);
-        } catch (Exception e) {
+        } catch ( Exception e ) {
             log.error("服务器发送消息给客户端失败", e);
         }
     }
@@ -104,11 +105,11 @@ public class WebSocketServer {
      */
     private void sendAllMessage(String message) {
         try {
-            for (Session session : sessionMap.values()) {
+            for ( Session session : sessionMap.values() ) {
                 log.info("服务器给客户端[{}]发送消息{}", session.getId(), message);
                 session.getBasicRemote().sendText(message);
             }
-        } catch (Exception e) {
+        } catch ( Exception e ) {
             log.error("服务器发送消息给客户端失败", e);
         }
     }
