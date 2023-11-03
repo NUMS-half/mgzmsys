@@ -1,4 +1,4 @@
-package cn.edu.neu.mgzmsys.common.utils;
+package cn.edu.neu.mgzmsys.common.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
