@@ -29,12 +29,13 @@ public class ChildController {
      * @return 儿童信息
      */
     @PostMapping(value = "/getChildById", headers = "Accept=application/json")
-    public HttpResponseEntity getChildById(HttpServletRequest request) {
-        String token=request.getHeader("token");
+    public HttpResponseEntity getChildById(@RequestHeader ("token")String token) {
+
         String id= JwtUtil.getUidFromToken(token);
+        System.out.println("id: " + id);
         HttpResponseEntity httpResponseEntity = new HttpResponseEntity();
         try{
-            if ( id == null ) {
+            if ( id == null ){
                 throw new NullPointerException();
             }
             cn.edu.neu.mgzmsys.entity.Child child = childService.selectChildInfo(id);
