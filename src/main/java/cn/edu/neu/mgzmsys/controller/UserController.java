@@ -34,9 +34,9 @@ public class UserController {
             if ( username == null || password == null ) {
                 throw new NullPointerException();
             }
-            boolean login = userService.login(username, password);
-            if ( login ) {
-                httpResponseEntity.setToken(JwtUtil.createToken(username));
+            String uid = userService.login(username, password);
+            if ( uid!=null ) {
+                httpResponseEntity.setToken(JwtUtil.createToken(username,uid));
                 httpResponseEntity.setCode("1");
                 httpResponseEntity.setData(null);
                 httpResponseEntity.setMessage("登录成功");

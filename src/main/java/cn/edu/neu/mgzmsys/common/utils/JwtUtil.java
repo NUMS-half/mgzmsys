@@ -2,49 +2,65 @@ package cn.edu.neu.mgzmsys.common.utils;
 
 import io.jsonwebtoken.*;
 
+import java.util.Base64;
 import java.util.Date;
 import java.util.UUID;
 
 public class JwtUtil {
 
-    //毫秒
-    private static long time=1000*60*60*24;
-    //签名
-    private static String signature="admin";
+    // 毫秒
+    private static final long EXPIRATION_TIME = 1000 * 60 * 60 * 24; // 24小时
+    // 签名密钥
+    private static final String SECRET_KEY = Base64.getEncoder().encodeToString("admin".getBytes());
 
-    public static String createToken(String username){
-        //构建JWT对象:Jwts.builder()
-        JwtBuilder jwtBuilder = Jwts.builder();
-        return jwtBuilder
-                //header
+    /**
+     * 创建Token
+     */
+    public static String createToken(String username, String uid) {
+        return Jwts.builder()
                 .setHeaderParam("typ", "JWT")
                 .setHeaderParam("alg", "HS256")
-                //payload
                 .claim("username", username)
+                .claim("uid", uid)
                 .setSubject("login")
-                //有效时间===>一天=当前时间+24小时
-                //获得当前的系统时间：System.currentTimeMillis()
-                .setExpiration(new Date(System.currentTimeMillis()+time))
+                .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
                 .setId(UUID.randomUUID().toString())
-                //signature
-                //注意点：这个签名算法要与前面的算法一致
-                .signWith(SignatureAlgorithm.HS256,signature)
-                //将前面3个重要信息拼接起来
+                .signWith(SignatureAlgorithm.HS256, SECRET_KEY)
                 .compact();
     }
-        /**
-     * 校验token是否正确
+
+    /**
+     * 校验Token
      */
-    public static boolean checkToken(String token){
-        if (token==null){
+    public static boolean checkToken(String token) {
+        if (token == null) {
             return false;
         }
         try {
-            //解析
-            Jws<Claims> claimsJws = Jwts.parser().setSigningKey(signature).parseClaimsJws(token);
-        }catch (Exception e){
-            e.printStackTrace();
+            Jwts.parser()
+                .setSigningKey(SECRET_KEY)
+                .parseClaimsJws(token);
+            return true;
+        } catch (JwtException e) {
+            return false;
         }
-        return true;
+    }
+
+    /**
+     * 解析Token
+     */
+    public static Claims parseToken(String token) {
+        return Jwts.parser()
+                .setSigningKey(SECRET_KEY)
+                .parseClaimsJws(token)
+                .getBody();
+    }
+
+    /**
+     * 从Token获取UID
+     */
+    public static String getUidFromToken(String token) {
+        Claims claims = parseToken(token);
+        return claims.get("uid", String.class);
     }
 }

@@ -1,11 +1,13 @@
 package cn.edu.neu.mgzmsys.controller;
 
 
+import cn.edu.neu.mgzmsys.common.utils.JwtUtil;
 import cn.edu.neu.mgzmsys.entity.HttpResponseEntity;
 import cn.edu.neu.mgzmsys.service.IChildService;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * <p>
@@ -27,7 +29,9 @@ public class ChildController {
      * @return 儿童信息
      */
     @PostMapping(value = "/getChildById", headers = "Accept=application/json")
-    public HttpResponseEntity getChildById(@RequestBody String id) {
+    public HttpResponseEntity getChildById(HttpServletRequest request) {
+        String token=request.getHeader("token");
+        String id= JwtUtil.getUidFromToken(token);
         HttpResponseEntity httpResponseEntity = new HttpResponseEntity();
         try{
             if ( id == null ) {

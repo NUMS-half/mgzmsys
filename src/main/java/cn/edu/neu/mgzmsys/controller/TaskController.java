@@ -58,9 +58,6 @@ public class TaskController {
         HttpResponseEntity httpResponseEntity = new HttpResponseEntity();
         map.put("finish_at",new Date());
         try{
-            if ( map == null ) {
-                throw new NullPointerException();
-            }
             boolean result = taskService.updateTask(map);
             if ( result ) {
                 httpResponseEntity.setCode("1");
