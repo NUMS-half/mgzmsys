@@ -1,16 +1,14 @@
 package cn.edu.neu.mgzmsys.controller;
 
 
+import cn.edu.neu.mgzmsys.common.utils.JwtUtil;
 import cn.edu.neu.mgzmsys.entity.HttpResponseEntity;
 import cn.edu.neu.mgzmsys.service.IChildService;
 import cn.edu.neu.mgzmsys.service.IUserService;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
 
 /**
@@ -38,6 +36,7 @@ public class UserController {
             }
             boolean login = userService.login(username, password);
             if ( login ) {
+                httpResponseEntity.setToken(JwtUtil.createToken(username));
                 httpResponseEntity.setCode("1");
                 httpResponseEntity.setData(null);
                 httpResponseEntity.setMessage("登录成功");
@@ -84,5 +83,15 @@ public class UserController {
         }
         return httpResponseEntity;
     }
+        /**
+     * 验证token方法
+     */
+    @GetMapping("/checkToken")
+    public Boolean checkToken(HttpServletRequest request){
+        //因为前端是将数据存储在header，所以我们要是有getHeader
+        String token = request.getHeader("token");
+        return JwtUtil.checkToken(token);
+    }
+
 }
 

@@ -10,4 +10,5 @@ public class HttpResponseEntity {
     private Object data;     //返回数据
 
     private String message;  //状态消息
+     private String token;
 }

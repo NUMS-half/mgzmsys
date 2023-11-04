@@ -20,6 +20,7 @@ spring:
     port: 5672
     username: nums
     password: 123456
+    virtual-host: /
 mybatis-plus:
   type-aliases-package: cn.edu.neu.mgzmsys.entity
   configuration:

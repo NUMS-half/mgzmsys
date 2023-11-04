@@ -1,10 +1,10 @@
 package cn.edu.neu.mgzmsys.common.config;
 
-import org.springframework.context.annotation.Configuration;
+import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-@Configuration
+@SpringBootConfiguration
 public class CorsConfig implements WebMvcConfigurer {
 
     @Override
@@ -13,9 +13,11 @@ public class CorsConfig implements WebMvcConfigurer {
                 //是否发送Cookie
                 .allowCredentials(true)
                 //放行哪些原始域
-                .allowedOrigins("*")
-                .allowedMethods(new String[]{"GET", "POST", "PUT", "DELETE"})
+                .allowedOrigins("http://localhost:8080")
+                .allowedOrigins("http://localhost:5173")
+                .allowedMethods("POST", "GET", "PUT", "OPTIONS", "DELETE")
                 .allowedHeaders("*")
-                .exposedHeaders("*");
+                .exposedHeaders("*")
+                .maxAge(3600);
     }
 }
