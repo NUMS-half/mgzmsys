@@ -4,17 +4,24 @@ import cn.edu.neu.mgzmsys.entity.Message;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * <p>
- *  服务类
+ * 服务类
  * </p>
  *
  * @author team15
  * @since 2023-11-02
  */
 public interface IMessageService extends IService<Message> {
- boolean saveMessage(Map<String,Object> map);
- List<Message> selectMessage(String connectionId);
+
+    /**
+     * 查询消息
+     */
+    List<Message> selectMessage(String connectionId);
+
+    /**
+     * 处理发送的消息
+     */
+    boolean handleSentMessage(Message message);
 }
