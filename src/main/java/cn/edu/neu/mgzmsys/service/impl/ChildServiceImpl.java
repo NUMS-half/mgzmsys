@@ -4,6 +4,7 @@ import cn.edu.neu.mgzmsys.entity.Child;
 import cn.edu.neu.mgzmsys.mapper.ChildMapper;
 import cn.edu.neu.mgzmsys.service.IChildService;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 
@@ -23,11 +24,16 @@ public class ChildServiceImpl extends ServiceImpl<ChildMapper, Child> implements
     @Resource
     ChildMapper childMapper;
 
+ /**
+     * 查询儿童信息
+     * @return 儿童信息
+     */
     @Override
     public Child selectChildInfo(String id) {
-        LambdaQueryWrapper<Child> wrapper = new LambdaQueryWrapper<>();
-        wrapper.eq(Child::getUserId, id);
-        return childMapper.selectOne(wrapper);
+    QueryWrapper<Child> queryWrapper = new QueryWrapper<>();
+    queryWrapper.select("child_id", "child_name", "gender", "birthday", "address", "phone", "hobby", "description");
+    return  childMapper.selectOne(queryWrapper.eq("child_id", id));
+
     }
     /**
      * 更新儿童信息
