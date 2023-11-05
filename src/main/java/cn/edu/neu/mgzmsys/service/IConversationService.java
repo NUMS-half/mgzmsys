@@ -7,12 +7,21 @@ import java.util.Map;
 
 /**
  * <p>
- *  服务类
+ * 服务类
  * </p>
  *
  * @author team15
  * @since 2023-11-02
  */
 public interface IConversationService extends IService<Conversation> {
- boolean setupConversation(Map<String,String> map);
+
+    /**
+     * 建立会话
+     */
+    boolean setupConversation(Map<String, String> map);
+
+    /**
+     * 根据两个参与者id获取会话
+     */
+    Conversation getByTwoParticipantIds(String participantId1, String participantId2);
 }

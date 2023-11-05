@@ -2,4 +2,11 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="cn.edu.neu.mgzmsys.mapper.ConversationMapper">
 
+    <select id="searchByTwoParticipantIds" parameterType="java.lang.String" resultType="cn.edu.neu.mgzmsys.entity.Conversation">
+        SELECT *
+        FROM conversation
+        WHERE (participant_one_id = #{participant1Id} AND participant_two_id = #{participant2Id})
+        OR (participant_one_id = #{participant2Id} AND participant_two_id = #{participant1Id})
+    </select>
+
 </mapper>

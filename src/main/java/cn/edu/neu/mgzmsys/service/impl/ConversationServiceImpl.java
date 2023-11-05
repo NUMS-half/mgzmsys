@@ -13,7 +13,7 @@ import java.util.Map;
 
 /**
  * <p>
- *  服务实现类
+ * 服务实现类
  * </p>
  *
  * @author team15
@@ -23,25 +23,39 @@ import java.util.Map;
 public class ConversationServiceImpl extends ServiceImpl<ConversationMapper, Conversation> implements IConversationService {
     @Resource
     ConversationMapper conversationMapper;
+
     /**
+     * 建立会话
      *
-     * @param map
-     * @return
+     * @return 是否建立成功
      */
     @Override
     public boolean setupConversation(Map<String, String> map) {
-        LambdaQueryWrapper<Conversation> lambdaQueryWrapper=new LambdaQueryWrapper<>();
-        lambdaQueryWrapper.and(i->i.eq(Conversation::getParticipantOneId,map.get("participation1")).eq(Conversation::getParticipantTwoId,map.get("participation2")))
-                .or(i->i.eq(Conversation::getParticipantTwoId,map.get("participation1")).eq(Conversation::getParticipantOneId,map.get("participation2")));
-        Conversation conversation=conversationMapper.selectOne(lambdaQueryWrapper);
-        if (conversation!=null)
+        LambdaQueryWrapper<Conversation> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+        lambdaQueryWrapper.and(i -> i.eq(Conversation::getParticipantOneId, map.get("participation1")).eq(Conversation::getParticipantTwoId, map.get("participation2")))
+                .or(i -> i.eq(Conversation::getParticipantTwoId, map.get("participation1")).eq(Conversation::getParticipantOneId, map.get("participation2")));
+        Conversation conversation = conversationMapper.selectOne(lambdaQueryWrapper);
+        if ( conversation != null ) {
             return false;
+        }
 
-        conversation=new Conversation();
+        conversation = new Conversation();
         conversation.setParticipantOneId(map.get("participation1"));
         conversation.setParticipantTwoId(map.get("participation2"));
         conversationMapper.insert(conversation);
         return true;
 
+    }
+
+    /**
+     * 根据两个参与者id获取会话
+     */
+    @Override
+    public Conversation getByTwoParticipantIds(String participantId1, String participantId2) {
+        if ( participantId1 == null || participantId2 == null ) {
+            return null;
+        } else {
+            return conversationMapper.searchByTwoParticipantIds(participantId1, participantId2);
+        }
     }
 }

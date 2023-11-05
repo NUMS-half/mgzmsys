@@ -25,7 +25,7 @@ public class JwtTokenFilter implements Filter {
         HttpServletResponse response = (HttpServletResponse) res;
 
         // 如果是OPTIONS请求，则直接放行
-        if ("OPTIONS".equalsIgnoreCase(request.getMethod())) {
+        if ("OPTIONS".equalsIgnoreCase(request.getMethod())|| request.getRequestURI().endsWith("/login")|| request.getRequestURI().endsWith("/register")) {
             response.setStatus(HttpServletResponse.SC_OK);
             filterChain.doFilter(request, response);
         } else {
