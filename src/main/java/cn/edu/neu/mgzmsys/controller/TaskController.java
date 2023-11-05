@@ -1,13 +1,10 @@
 package cn.edu.neu.mgzmsys.controller;
 
 
+import cn.edu.neu.mgzmsys.common.utils.JwtUtil;
 import cn.edu.neu.mgzmsys.entity.HttpResponseEntity;
 import cn.edu.neu.mgzmsys.entity.Task;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.util.Date;
@@ -31,8 +28,9 @@ public class TaskController {
      * 根据儿童id获取任务
      * @return 任务列表
      */
-    @PostMapping(value = "/getTaskById", headers = "Accept=application/json")
-    public HttpResponseEntity getTaskById(@RequestBody String id) {
+    @GetMapping(value = "/getTaskById", headers = "Accept=application/json")
+    public HttpResponseEntity getTaskById(@RequestHeader("token")String token) {
+        String id = JwtUtil.getUidFromToken(token);
         HttpResponseEntity httpResponseEntity = new HttpResponseEntity();
         try{
             if ( id == null ) {
