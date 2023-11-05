@@ -21,4 +21,6 @@ public interface IUserService extends IService<User> {
      */
     boolean register(Child child);
     boolean register(Volunteer volunteer);
+
+    boolean updatePassword(String id, String password);
 }

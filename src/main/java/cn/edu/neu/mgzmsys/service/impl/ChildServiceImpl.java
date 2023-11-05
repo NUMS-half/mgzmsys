@@ -29,4 +29,14 @@ public class ChildServiceImpl extends ServiceImpl<ChildMapper, Child> implements
         wrapper.eq(Child::getUserId, id);
         return childMapper.selectOne(wrapper);
     }
+    /**
+     * 更新儿童信息
+     * @return 是否成功
+     */
+    @Override
+    public boolean updateChildInfo(Child child) {
+        LambdaQueryWrapper<Child> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(Child::getUserId, child.getUserId());
+        return childMapper.update(child, wrapper) == 1;
+    }
 }

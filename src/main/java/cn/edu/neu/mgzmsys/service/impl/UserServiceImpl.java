@@ -86,4 +86,14 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         volunteerMapper.insert(volunteer);
         return true;
     }
+    /**
+     * 修改密码业务
+     * @return 是否成功
+     */
+    @Override
+    public boolean updatePassword(String id, String password){
+        User user = userMapper.selectById(id);
+        user.setPassword(password);
+        return userMapper.updateById(user) > 0;
+    }
 }
