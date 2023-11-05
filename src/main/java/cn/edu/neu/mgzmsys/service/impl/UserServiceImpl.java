@@ -34,15 +34,17 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
      * @return 是否成功
      */
     @Override
-    public boolean login(String username, String password) {
+    public String login(String username, String password) {
 
         // 通过用户名查询用户
         LambdaQueryWrapper<User> lambdaQueryWrapper = new LambdaQueryWrapper<>();
         lambdaQueryWrapper.eq(username != null, User::getUserName, username);
         User user = userMapper.selectOne(lambdaQueryWrapper);
-
+        if (user != null && user.getPassword().equals(password)){
+            return user.getUserId();
+        }
         // 判断用户是否存在，存在则判断密码是否正确
-        return user != null && user.getPassword().equals(password);
+        return null;
     }
     /**
      * 注册业务
@@ -83,5 +85,15 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         userMapper.insert(user);
         volunteerMapper.insert(volunteer);
         return true;
+    }
+    /**
+     * 修改密码业务
+     * @return 是否成功
+     */
+    @Override
+    public boolean updatePassword(String id, String password){
+        User user = userMapper.selectById(id);
+        user.setPassword(password);
+        return userMapper.updateById(user) > 0;
     }
 }

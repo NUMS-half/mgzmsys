@@ -14,11 +14,13 @@ import com.baomidou.mybatisplus.extension.service.IService;
  * @since 2023-11-02
  */
 public interface IUserService extends IService<User> {
-   boolean login(String username, String password);
+   String login(String username, String password);
 /**
      * 注册业务
      * @return 是否成功
      */
     boolean register(Child child);
     boolean register(Volunteer volunteer);
+
+    boolean updatePassword(String id, String password);
 }
