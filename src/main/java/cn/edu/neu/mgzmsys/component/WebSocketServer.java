@@ -1,8 +1,9 @@
 package cn.edu.neu.mgzmsys.component;
 
+import cn.edu.neu.mgzmsys.entity.Conversation;
 import cn.edu.neu.mgzmsys.entity.Message;
+import cn.edu.neu.mgzmsys.service.IConversationService;
 import cn.edu.neu.mgzmsys.service.IMessageService;
-import cn.hutool.json.JSONArray;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import org.slf4j.Logger;
@@ -15,9 +16,7 @@ import javax.websocket.server.PathParam;
 import javax.websocket.server.ServerEndpoint;
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.Map;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -30,20 +29,26 @@ public class WebSocketServer {
 
     private static IMessageService messageService;
 
+    private static IConversationService conversationService;
+
     @Autowired
     public void setMessageService(IMessageService messageService) {
         WebSocketServer.messageService = messageService;
     }
 
-    // 连接超时时间
-    private static final long SESSION_TIMEOUT = 30 * 60 * 1000; // 30分钟，单位是毫秒
+    @Autowired
+    public void setConversationService(IConversationService conversationService) {
+        WebSocketServer.conversationService = conversationService;
+    }
+
+    // 连接超时时间(60分钟)
+    private static final long SESSION_TIMEOUT = 60 * 60 * 1000;
 
     // 日志记录器
     private static final Logger log = LoggerFactory.getLogger(WebSocketServer.class);
 
     // 记录当前在线连接数(客户端个数)
     protected static final Map<String, Session> sessionMap = new ConcurrentHashMap<>();
-
 
     /**
      * 连接建立成功调用的方法
@@ -53,25 +58,19 @@ public class WebSocketServer {
         sessionMap.put(userId, session);
         log.info("有新用户(userId:{})加入, 当前在线总人数为:{}", userId, sessionMap.size());
 
-        // 创建JSON对象
-        JSONObject result = new JSONObject();
-
-        // 创建JSON对象的数组
-        JSONArray array = new JSONArray();
-
-        // 为JSON对象的users属性赋值
-        result.set("users", array);
-
-        for ( Object key : sessionMap.keySet() ) {
-            JSONObject jsonObject = new JSONObject();
-            jsonObject.set("userId", key);
-            array.add(jsonObject);
-        }
-        // 服务器发送消息给所有的客户端
-        sendAllMessage(JSONUtil.toJsonStr(result));
-
         // 启动定时任务，用于关闭过期的会话
         startSessionTimeoutTask(userId);
+
+        // 从MQ中获取目标用户的消息
+        List<Conversation> conversationList = conversationService.getByParticipantId(userId);
+        for ( Conversation conversation : conversationList ) {
+            Queue<Message> messageQueue = messageService.getSentMessages(conversation.getConversationId());
+            while ( !messageQueue.isEmpty() ) {
+                Message message = messageQueue.poll();
+                // 处理消息，判断目标用户是否在线
+                this.processMessage(message);
+            }
+        }
     }
 
     /**
@@ -107,30 +106,41 @@ public class WebSocketServer {
         sendMessage.setMessageType(obj.getInt("messageType"));
         sendMessage.setMessageStatus(0);
 
-        String receiveUserId = obj.getStr("receiveId"); // 表示发送给哪个用户
-        Session toSession = sessionMap.get(receiveUserId); // 根据 id 获取 session，再通过session发送消息文本
-
-        // 保存并推送消息至消息队列
-        if ( messageService.handleSentMessage(sendMessage) ) {
-            log.info("消息保存数据库与MQ成功");
+        // 保存消息
+        if ( messageService.saveMessage(sendMessage) ) {
+            log.info("消息保存数据库成功");
         } else {
             log.error("消息保存失败");
         }
-
-        if ( toSession != null ) {
-            JSONObject jsonObject = new JSONObject(sendMessage);
-            jsonObject.set("messageTime", localDateTime.toString());
-            this.sendMessage(jsonObject.toString(), toSession);
-            log.info("发送给用户(userId:{}), 消息:{}", receiveUserId, jsonObject);
-        } else {
-            log.info("发送失败，未找到用户(userId:{})的session", receiveUserId);
-        }
+        // 处理消息，判断目标用户是否在线
+        this.processMessage(sendMessage);
     }
 
     @OnError
     public void onError(Session session, Throwable error) {
         log.error("发生错误");
         error.printStackTrace();
+    }
+
+    /**
+     * 消息处理方法
+     */
+    private void processMessage(Message message) {
+        // 解析消息
+        String receiveUserId = message.getReceiveId();
+        Session toSession = sessionMap.get(receiveUserId);
+
+        if ( toSession != null ) {
+            // 用户在线，推送消息给目标用户
+            JSONObject jsonObject = new JSONObject(message);
+            jsonObject.set("messageTime", message.getMessageTime().toString());
+            sendMessage(jsonObject.toString(), toSession);
+            log.info("发送给用户(userId:{}), 消息: {}", receiveUserId, jsonObject);
+        } else {
+            // 用户不在线，将消息存储到MQ中
+            messageService.handleSentMessage(message);
+            log.info("用户(userId:{})不在线，消息推送至MQ", receiveUserId);
+        }
     }
 
     /**
@@ -146,20 +156,6 @@ public class WebSocketServer {
     }
 
     /**
-     * 服务器发送消息给所有客户端
-     */
-    private void sendAllMessage(String message) {
-        try {
-            for ( Session session : sessionMap.values() ) {
-                log.info("服务器给客户端[{}]发送消息{}", session.getId(), message);
-                session.getBasicRemote().sendText(message);
-            }
-        } catch ( Exception e ) {
-            log.error("服务器发送消息给客户端失败", e);
-        }
-    }
-
-    /**
      * 启动定时任务，用于关闭过期的会话
      */
     private void startSessionTimeoutTask(String userId) {
@@ -168,7 +164,7 @@ public class WebSocketServer {
             @Override
             public void run() throws RuntimeException {
                 Session session = sessionMap.get(userId);
-                if (session != null) {
+                if ( session != null ) {
                     try {
                         session.close();
                     } catch ( IOException e ) {
