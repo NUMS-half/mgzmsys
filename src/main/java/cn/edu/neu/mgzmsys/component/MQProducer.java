@@ -14,9 +14,9 @@ public class MQProducer {
     private AmqpTemplate amqpTemplate;
 
     /**
-     * 发送消息到test.queue
+     * 发送消息到目标会话的queue
      */
     public void sendToChatQueue(Message message) {
-        amqpTemplate.convertAndSend("chat.queue", message);
+        amqpTemplate.convertAndSend(message.getConversationId(), message);
     }
 }

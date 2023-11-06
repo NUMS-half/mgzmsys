@@ -29,11 +29,10 @@ public class ChildController {
      * 根据儿童id获取儿童信息
      * @return 儿童信息
      */
-    @PostMapping(value = "/getChildById", headers = "Accept=application/json")
+    @GetMapping(value = "/getChildById", headers = "Accept=application/json")
     public HttpResponseEntity getChildById(@RequestHeader ("token")String token) {
 
         String id= JwtUtil.getUidFromToken(token);
-        System.out.println("id: " + id);
         HttpResponseEntity httpResponseEntity = new HttpResponseEntity();
         try{
             if ( id == null ){

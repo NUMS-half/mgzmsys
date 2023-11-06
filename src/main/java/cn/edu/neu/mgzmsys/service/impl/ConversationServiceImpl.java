@@ -1,5 +1,6 @@
 package cn.edu.neu.mgzmsys.service.impl;
 
+import cn.edu.neu.mgzmsys.component.RabbitMQQueueManager;
 import cn.edu.neu.mgzmsys.entity.Conversation;
 import cn.edu.neu.mgzmsys.mapper.ConversationMapper;
 import cn.edu.neu.mgzmsys.service.IConversationService;
@@ -9,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -24,11 +26,13 @@ public class ConversationServiceImpl extends ServiceImpl<ConversationMapper, Con
     @Resource
     ConversationMapper conversationMapper;
 
+    @Resource
+    RabbitMQQueueManager rabbitMQQueueManager;
+
     /**
      * 建立会话
      *
-     * @param map
-     * @return
+     * @return 是否建立成功
      */
     @Override
     public boolean setupConversation(Map<String, String> map) {
@@ -44,8 +48,11 @@ public class ConversationServiceImpl extends ServiceImpl<ConversationMapper, Con
         conversation.setParticipantOneId(map.get("participation1"));
         conversation.setParticipantTwoId(map.get("participation2"));
         conversationMapper.insert(conversation);
-        return true;
 
+        // 在RabbitMQ中创建以conversationId为name的队列
+        rabbitMQQueueManager.createQueueIfNotExists(conversation.getConversationId());
+
+        return true;
     }
 
     /**
@@ -58,5 +65,14 @@ public class ConversationServiceImpl extends ServiceImpl<ConversationMapper, Con
         } else {
             return conversationMapper.searchByTwoParticipantIds(participantId1, participantId2);
         }
+    }
+    /**
+     * 根据会话id获取会话list
+     */
+    @Override
+    public List<Conversation> getByParticipantId(String participantId) {
+       LambdaQueryWrapper<Conversation> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+       lambdaQueryWrapper.and(i -> i.eq(Conversation::getParticipantOneId, participantId).or().eq(Conversation::getParticipantTwoId, participantId));
+         return conversationMapper.selectList(lambdaQueryWrapper);
     }
 }

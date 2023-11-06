@@ -11,6 +11,8 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.List;
+import java.util.Queue;
+
 /**
  * <p>
  * 服务实现类
@@ -44,18 +46,26 @@ public class MessageServiceImpl extends ServiceImpl<MessageMapper, Message> impl
     }
 
     /**
-     * 处理发送的消息
+     * 消息队列存储离线发送的消息
      */
     @Override
-    public boolean handleSentMessage(Message message) {
+    public void handleSentMessage(Message message) {
+        mqProducer.sendToChatQueue(message);
+    }
 
-        // 保存消息到数据库
-        if ( messageMapper.insert(message) > 0 ) {
-            // 发送消息到消息队列
-            mqProducer.sendToChatQueue(message);
-            return true;
-        } else {
-            return false;
-        }
+    /**
+     * 消息队列获取离线发送的消息
+     */
+    @Override
+    public Queue<Message> getSentMessages(String queueName) {
+        return mqConsumer.getMessagesFromQueue(queueName);
+    }
+
+    /**
+     * 保存在线发送的消息
+     */
+    @Override
+    public boolean saveMessage(Message message) {
+        return messageMapper.insert(message) > 0;
     }
 }
