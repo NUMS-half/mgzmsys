@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -64,5 +65,14 @@ public class ConversationServiceImpl extends ServiceImpl<ConversationMapper, Con
         } else {
             return conversationMapper.searchByTwoParticipantIds(participantId1, participantId2);
         }
+    }
+    /**
+     * 根据会话id获取会话list
+     */
+    @Override
+    public List<Conversation> getByParticipantId(String participantId) {
+       LambdaQueryWrapper<Conversation> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+       lambdaQueryWrapper.and(i -> i.eq(Conversation::getParticipantOneId, participantId).or().eq(Conversation::getParticipantTwoId, participantId));
+         return conversationMapper.selectList(lambdaQueryWrapper);
     }
 }

@@ -7,7 +7,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import static org.junit.Assert.*;
 
-@SpringBootTest
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @RunWith(SpringJUnit4ClassRunner.class)
 public class IChildServiceTest {
 
@@ -23,5 +23,9 @@ public class IChildServiceTest {
 //
 //        assertTrue(result1);
 //        assertFalse(result2);
+    }
+      @Test
+      public void selectChildInfo() {
+        System.out.println(childService.selectChildInfo("101"));
     }
 }

@@ -31,7 +31,7 @@ public class JwtTokenFilter implements Filter {
         } else {
             try {
                 String token = request.getHeader("token");
-                if (JwtUtil.checkToken(token)) {
+                if (JwtUtil.checkToken(token)&&token.equals("")) {
                     filterChain.doFilter(request, response);
                 } else {
                     response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Invalid JWT Token");

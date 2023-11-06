@@ -9,7 +9,7 @@ import java.util.UUID;
 public class JwtUtil {
 
     // 毫秒
-    private static final long EXPIRATION_TIME = 1000 * 60 * 60 * 24; // 24小时
+    private static final long EXPIRATION_TIME = 1000 * 60 * 60 * 2; // 24小时
     // 签名密钥
     private static final String SECRET_KEY = Base64.getEncoder().encodeToString("admin".getBytes());
 
