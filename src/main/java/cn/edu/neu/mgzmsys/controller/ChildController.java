@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import java.text.ParseException;
 
 /**
  * <p>
@@ -30,7 +31,7 @@ public class ChildController {
      * @return 儿童信息
      */
     @GetMapping(value = "/getChildById", headers = "Accept=application/json")
-    public HttpResponseEntity getChildById(@RequestHeader ("token")String token) {
+    public HttpResponseEntity getChildById(@RequestHeader ("token")String token) throws ParseException {
 
         String id= JwtUtil.getUidFromToken(token);
         HttpResponseEntity httpResponseEntity = new HttpResponseEntity();
@@ -54,7 +55,7 @@ public class ChildController {
      * @return 更新是否成功
      */
     @PostMapping(value = "/updateChild", headers = "Accept=application/json")
-    public HttpResponseEntity updateChild(@RequestBody Child child,@RequestHeader ("token")String token) {
+    public HttpResponseEntity updateChild(@RequestBody Child child,@RequestHeader ("token")String token) throws ParseException {
         String id= JwtUtil.getUidFromToken(token);
         child.setUserId(id);
         HttpResponseEntity httpResponseEntity = new HttpResponseEntity();

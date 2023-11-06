@@ -7,6 +7,7 @@ import cn.edu.neu.mgzmsys.entity.Task;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -29,7 +30,7 @@ public class TaskController {
      * @return 任务列表
      */
     @GetMapping(value = "/getTaskById", headers = "Accept=application/json")
-    public HttpResponseEntity getTaskById(@RequestHeader("token")String token) {
+    public HttpResponseEntity getTaskById(@RequestHeader("token")String token) throws ParseException {
         String id = JwtUtil.getUidFromToken(token);
         HttpResponseEntity httpResponseEntity = new HttpResponseEntity();
         try{

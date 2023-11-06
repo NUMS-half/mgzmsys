@@ -1,6 +1,6 @@
 package cn.edu.neu.mgzmsys.mapper;
 
-import cn.edu.neu.mgzmsys.entity.User;
+import cn.edu.neu.mgzmsys.entity.Users;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
 
@@ -13,6 +13,6 @@ import org.apache.ibatis.annotations.Mapper;
  * @since 2023-11-02
  */
 @Mapper
-public interface UserMapper extends BaseMapper<User> {
+public interface UserMapper extends BaseMapper<Users> {
 
 }
