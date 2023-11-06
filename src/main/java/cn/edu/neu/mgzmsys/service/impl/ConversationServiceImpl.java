@@ -1,5 +1,6 @@
 package cn.edu.neu.mgzmsys.service.impl;
 
+import cn.edu.neu.mgzmsys.component.RabbitMQQueueManager;
 import cn.edu.neu.mgzmsys.entity.Conversation;
 import cn.edu.neu.mgzmsys.mapper.ConversationMapper;
 import cn.edu.neu.mgzmsys.service.IConversationService;
@@ -24,11 +25,13 @@ public class ConversationServiceImpl extends ServiceImpl<ConversationMapper, Con
     @Resource
     ConversationMapper conversationMapper;
 
+    @Resource
+    RabbitMQQueueManager rabbitMQQueueManager;
+
     /**
      * 建立会话
      *
-     * @param map
-     * @return
+     * @return 是否建立成功
      */
     @Override
     public boolean setupConversation(Map<String, String> map) {
@@ -44,8 +47,11 @@ public class ConversationServiceImpl extends ServiceImpl<ConversationMapper, Con
         conversation.setParticipantOneId(map.get("participation1"));
         conversation.setParticipantTwoId(map.get("participation2"));
         conversationMapper.insert(conversation);
-        return true;
 
+        // 在RabbitMQ中创建以conversationId为name的队列
+        rabbitMQQueueManager.createQueueIfNotExists(conversation.getConversationId());
+
+        return true;
     }
 
     /**

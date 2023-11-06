@@ -33,7 +33,6 @@ public class ChildController {
     public HttpResponseEntity getChildById(@RequestHeader ("token")String token) {
 
         String id= JwtUtil.getUidFromToken(token);
-        System.out.println("id: " + id);
         HttpResponseEntity httpResponseEntity = new HttpResponseEntity();
         try{
             if ( id == null ){

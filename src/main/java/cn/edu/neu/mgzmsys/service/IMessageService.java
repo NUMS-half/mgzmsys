@@ -4,6 +4,7 @@ import cn.edu.neu.mgzmsys.entity.Message;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 import java.util.List;
+import java.util.Queue;
 
 /**
  * <p>
@@ -21,7 +22,17 @@ public interface IMessageService extends IService<Message> {
     List<Message> selectMessage(String connectionId);
 
     /**
-     * 处理发送的消息
+     * 消息队列存储离线发送的消息
      */
-    boolean handleSentMessage(Message message);
+    void handleSentMessage(Message message);
+
+    /**
+     * 消息队列获取离线发送的消息
+     */
+    public Queue<Message> getSentMessages(String queueName);
+
+    /**
+     * 保存在线发送的消息
+     */
+    public boolean saveMessage(Message message);
 }
