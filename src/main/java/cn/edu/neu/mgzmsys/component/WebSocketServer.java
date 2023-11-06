@@ -1,6 +1,8 @@
 package cn.edu.neu.mgzmsys.component;
 
+import cn.edu.neu.mgzmsys.entity.Conversation;
 import cn.edu.neu.mgzmsys.entity.Message;
+import cn.edu.neu.mgzmsys.service.IConversationService;
 import cn.edu.neu.mgzmsys.service.IMessageService;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
@@ -14,9 +16,7 @@ import javax.websocket.server.PathParam;
 import javax.websocket.server.ServerEndpoint;
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.Map;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -29,9 +29,16 @@ public class WebSocketServer {
 
     private static IMessageService messageService;
 
+    private static IConversationService conversationService;
+
     @Autowired
     public void setMessageService(IMessageService messageService) {
         WebSocketServer.messageService = messageService;
+    }
+
+    @Autowired
+    public void setConversationService(IConversationService conversationService) {
+        WebSocketServer.conversationService = conversationService;
     }
 
     // 连接超时时间(60分钟)
@@ -55,7 +62,15 @@ public class WebSocketServer {
         startSessionTimeoutTask(userId);
 
         // 从MQ中获取目标用户的消息
-
+        List<Conversation> conversationList = conversationService.getByParticipantId(userId);
+        for ( Conversation conversation : conversationList ) {
+            Queue<Message> messageQueue = messageService.getSentMessages(conversation.getConversationId());
+            while ( !messageQueue.isEmpty() ) {
+                Message message = messageQueue.poll();
+                // 处理消息，判断目标用户是否在线
+                this.processMessage(message);
+            }
+        }
     }
 
     /**
@@ -128,7 +143,6 @@ public class WebSocketServer {
         }
     }
 
-
     /**
      * 服务器发送消息给客户端
      */
@@ -136,20 +150,6 @@ public class WebSocketServer {
         try {
             log.info("服务器给客户端[{}]发送消息{}", toSession.getId(), message);
             toSession.getBasicRemote().sendText(message);
-        } catch ( Exception e ) {
-            log.error("服务器发送消息给客户端失败", e);
-        }
-    }
-
-    /**
-     * 服务器发送消息给所有客户端
-     */
-    private void sendAllMessage(String message) {
-        try {
-            for ( Session session : sessionMap.values() ) {
-                log.info("服务器给客户端[{}]发送消息{}", session.getId(), message);
-                session.getBasicRemote().sendText(message);
-            }
         } catch ( Exception e ) {
             log.error("服务器发送消息给客户端失败", e);
         }
@@ -176,15 +176,5 @@ public class WebSocketServer {
             }
         }, SESSION_TIMEOUT);
     }
-
-//    /**
-//     * 接收来自 RabbitMQ 队列的消息
-//     */
-//    @RabbitListener(queues = "chat.queue")
-//    public void receiveMessageFromChatQueue(Message message) {
-//        // 当有新消息到达队列时，处理消息
-//        System.out.println("监听并接收到消息" + message);
-//        processMessage(message);
-//    }
 }
 
