@@ -44,10 +44,10 @@ public class WebSocketServer {
     // 连接超时时间(60分钟)
     private static final long SESSION_TIMEOUT = 60 * 60 * 1000;
 
-    // 日志记录器
+    // 控制台日志记录器
     private static final Logger log = LoggerFactory.getLogger(WebSocketServer.class);
 
-    // 记录当前在线连接数(客户端个数)
+    // 记录当前用户个数
     protected static final Map<String, Session> sessionMap = new ConcurrentHashMap<>();
 
     /**
@@ -79,16 +79,11 @@ public class WebSocketServer {
     @OnClose
     public void onClose(Session session, @PathParam("userId") String userId) {
         sessionMap.remove(userId);
-        log.info("有1连接关闭，移除userId={}的用户session, 当前在线总人数为:{}", userId, sessionMap.size());
+        log.info("userId={}的用户离线, 当前在线总人数为:{}", userId, sessionMap.size());
     }
 
     /**
      * 收到客户端消息后调用的方法
-     * 后台收到客户端发送过来的消息
-     * onMessage 是一个消息的中转站
-     * 接受 浏览器端 socket.send 发送过来的 json数据
-     *
-     * @param message 客户端发送过来的消息
      */
     @OnMessage
     public void onMessage(String message, Session session, @PathParam("userId") String userId) {
@@ -106,16 +101,13 @@ public class WebSocketServer {
         sendMessage.setMessageType(obj.getInt("messageType"));
         sendMessage.setMessageStatus(0);
 
-        // 保存消息
-        if ( messageService.saveMessage(sendMessage) ) {
-            log.info("消息保存数据库成功");
-        } else {
-            log.error("消息保存失败");
-        }
         // 处理消息，判断目标用户是否在线
         this.processMessage(sendMessage);
     }
 
+    /**
+     * 发生错误时调用的方法
+     */
     @OnError
     public void onError(Session session, Throwable error) {
         log.error("发生错误");
@@ -123,7 +115,7 @@ public class WebSocketServer {
     }
 
     /**
-     * 消息处理方法
+     * 消息处调用的方法
      */
     private void processMessage(Message message) {
         // 解析消息
@@ -131,7 +123,12 @@ public class WebSocketServer {
         Session toSession = sessionMap.get(receiveUserId);
 
         if ( toSession != null ) {
-            // 用户在线，推送消息给目标用户
+            // 用户在线，消息保存到数据库，并推送给目标用户
+            if ( messageService.saveMessage(message) ) {
+                log.info("消息保存数据库成功");
+            } else {
+                log.error("消息保存失败");
+            }
             JSONObject jsonObject = new JSONObject(message);
             jsonObject.set("messageTime", message.getMessageTime().toString());
             sendMessage(jsonObject.toString(), toSession);
