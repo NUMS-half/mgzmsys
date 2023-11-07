@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import java.text.ParseException;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -58,6 +59,28 @@ public class TaskController {
             } else {
                 return HttpResponseEntity.UPDATE_FAIL.toResponseEntity();
             }
+        } catch ( Exception e ) {
+            return HttpResponseEntity.ERROR.toResponseEntity();
+        }
+    }
+    /**
+     * 查询任务
+     */
+    @GetMapping(value = "/taskDetail", headers = "Accept=application/json")
+    public ResponseEntity<HttpResponseEntity> selectTask(@RequestBody String taskId,@RequestHeader("token")String token) throws ParseException {
+        String id = JwtUtil.getUidFromToken(token);
+        try{
+            if ( id == null ) {
+                throw new NullPointerException();
+            }
+            Map<String,Object> map = new HashMap<>();
+            map.put("child_id",id);
+            map.put("task_id",taskId);
+            Map<String,Object> result = taskService.selectTask(map);
+            if ( result == null ) {
+                return HttpResponseEntity.GET_FAIL.toResponseEntity();
+            }
+            return  new HttpResponseEntity().get(map).toResponseEntity();
         } catch ( Exception e ) {
             return HttpResponseEntity.ERROR.toResponseEntity();
         }

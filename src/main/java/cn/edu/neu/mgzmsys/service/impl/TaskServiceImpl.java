@@ -47,4 +47,11 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements IT
     public boolean updateTask(Map<String, Object> map){
         return taskChildMapper.updateChildTask(map);
     }
+    /**
+     * 查询任务
+     */
+    @Override
+    public Map<String,Object> selectTask(Map<String, Object> map){
+        return taskChildMapper.selectChildTask(map);
+    }
 }

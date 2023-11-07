@@ -11,7 +11,10 @@
     <if test="finish_at != null">finish_at = #{finish_at},</if>
     <!-- 继续添加其他需要更新的字段 -->
   </set>
-  WHERE task_id = #{task_id} AND user_id = #{user_id}
-</update>
+  WHERE task_id = #{task_id} AND child_id = #{user_id}
+    </update>
+    <select id="selectChildTask" resultType="java.util.Map" parameterType="java.util.Map">
+        SELECT * FROM child_task WHERE task_id = #{task_id} AND child_id = #{child_id}
+    </select>
 </mapper>
 
