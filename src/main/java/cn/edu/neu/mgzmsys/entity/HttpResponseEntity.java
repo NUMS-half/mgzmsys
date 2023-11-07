@@ -19,7 +19,7 @@ public class HttpResponseEntity {
         return new HttpResponseEntity(ResponseEnum.LOGIN_SUCCESS.getCode(), t);
     }
     public HttpResponseEntity get(Object t){
-        return new HttpResponseEntity(ResponseEnum.GET_SUCCESS.getCode(), ResponseEnum.GET_SUCCESS.getMsg());
+        return new HttpResponseEntity(ResponseEnum.GET_SUCCESS.getCode(),t,ResponseEnum.GET_SUCCESS.getMsg());
     }
     public static final HttpResponseEntity LOGIN_SUCCESS=
             new HttpResponseEntity(ResponseEnum.LOGIN_SUCCESS.getCode(),
@@ -51,6 +51,11 @@ public class HttpResponseEntity {
     }
     public HttpResponseEntity (Integer code, String msg) {
         this.code = code;
+        this.message = msg;
+    }
+    public HttpResponseEntity(Integer code, Object data, String msg) {
+        this.code = code;
+        this.data = data;
         this.message = msg;
     }
      public ResponseEntity<HttpResponseEntity> toResponseEntity() {
