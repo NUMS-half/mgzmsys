@@ -30,8 +30,8 @@ public class VolunteerServiceImpl extends ServiceImpl<VolunteerMapper, Volunteer
      */
     public Volunteer selectVolunteerInfo(String id) {
         QueryWrapper<Volunteer> wrapper = new QueryWrapper<>();
-        wrapper.select("volunteer_id", "volunteer_name", "volunteer_birthday", "gender", "description", "phone");
-        return volunteerMapper.selectOne(wrapper.eq("volunteer_id", id));
+        wrapper.select("user_id", "volunteer_name", "volunteer_birthday", "gender", "description", "phone");
+        return volunteerMapper.selectOne(wrapper.eq("user_id", id));
     }
 
 
