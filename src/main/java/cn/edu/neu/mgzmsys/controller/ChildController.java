@@ -41,7 +41,7 @@ public class ChildController {
             }
             cn.edu.neu.mgzmsys.entity.Child child = childService.selectChildInfo(id);
             if ( child != null ) {
-                return new HttpResponseEntity().ok(child).toResponseEntity();
+                return new HttpResponseEntity().get(child).toResponseEntity();
             } else {
                 return HttpResponseEntity.GET_FAIL.toResponseEntity();
             }
