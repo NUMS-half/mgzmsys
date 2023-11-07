@@ -35,7 +35,7 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements IT
     @Override
     public List<Task> getTaskById(String id){
         LambdaQueryWrapper<Task> lambdaQueryWrapper = new LambdaQueryWrapper<>();
-        String sql = "select task_id from task_child where child_id = " + id;
+        String sql = "select task_id from child_task where child_id = \"" + id+"\"";
         lambdaQueryWrapper.inSql(Task::getTaskId, sql);
         return taskMapper.selectList(lambdaQueryWrapper);
     }
