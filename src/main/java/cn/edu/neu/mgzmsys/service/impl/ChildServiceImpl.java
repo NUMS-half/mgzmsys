@@ -31,8 +31,8 @@ public class ChildServiceImpl extends ServiceImpl<ChildMapper, Child> implements
     @Override
     public Child selectChildInfo(String id) {
     QueryWrapper<Child> queryWrapper = new QueryWrapper<>();
-    queryWrapper.select("child_id", "child_name", "gender", "birthday", "address", "phone", "hobby", "description");
-    return  childMapper.selectOne(queryWrapper.eq("child_id", id));
+    queryWrapper.select("user_id", "child_name", "gender", "birthday", "address", "phone", "hobby", "description");
+    return  childMapper.selectOne(queryWrapper.eq("user_id", id));
 
     }
     /**
@@ -42,8 +42,8 @@ public class ChildServiceImpl extends ServiceImpl<ChildMapper, Child> implements
     @Override
     public boolean updateChildInfo(Child child) {
         QueryWrapper<Child> wrapper = new QueryWrapper<>();
-        //生成update child_name,gender,birthday,address,phone,hobby,description from child where child_id = #{userId}的wrapper
-        wrapper.eq("child_id", child.getUserId());
+        //生成update child_name,gender,birthday,address,phone,hobby,description from child where user_id = #{userId}的wrapper
+        wrapper.eq("user_id", child.getUserId());
 
         return childMapper.update(child, wrapper) == 1;
     }

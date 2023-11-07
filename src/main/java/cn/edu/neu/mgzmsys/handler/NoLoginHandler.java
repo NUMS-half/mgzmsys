@@ -22,5 +22,6 @@ public class NoLoginHandler implements AuthenticationEntryPoint {
             throws IOException, ServletException {
         httpServletResponse.setContentType("application/json;charset=UTF-8");
         httpServletResponse.getWriter().write(JSON.toJSONString(HttpResponseEntity.NO_LOGIN));
+        httpServletResponse.setStatus(HttpResponseEntity.NO_LOGIN.getCode());
     }
 }

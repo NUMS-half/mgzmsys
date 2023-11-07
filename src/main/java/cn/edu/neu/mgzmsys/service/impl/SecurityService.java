@@ -36,7 +36,7 @@ public class SecurityService implements UserDetailsService {
         if(users !=null) {
 
             //username 数据库产查用户信息
-            return new MyUserDetails(users.getUserId(),users.getUserName(),passwordEncoder.encode(users.getPassword()));
+            return new MyUserDetails(users.getUserId(),users.getUserName(),users.getPassword());
         }
         else {
             throw new UsernameNotFoundException("该用户不存在");

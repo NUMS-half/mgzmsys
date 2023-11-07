@@ -17,7 +17,7 @@ public class JwtUtil {
 //     毫秒
     private static final long EXPIRATION_TIME = 1000 * 60 * 60 * 2; // 2小时
     // 签名密钥
-    private static final String SECRET_KEY = Base64.getEncoder().encodeToString("admin".getBytes());
+    private static final String SECRET_KEY = "pddeho5lh7X6bJxx7o8zSCKkN/YvlnwfGKSCK7XxtG0=";
 
     /**
      * 创建Token

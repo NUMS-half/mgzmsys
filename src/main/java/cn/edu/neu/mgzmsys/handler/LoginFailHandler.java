@@ -18,5 +18,6 @@ public class LoginFailHandler implements AuthenticationFailureHandler {
             throws IOException, ServletException {
         httpServletResponse.setContentType("application/json;charset=UTF-8");
         httpServletResponse.getWriter().write(JSON.toJSONString(HttpResponseEntity.LOGIN_FAIL));
+        httpServletResponse.setStatus(HttpResponseEntity.LOGIN_FAIL.getCode());
     }
 }
