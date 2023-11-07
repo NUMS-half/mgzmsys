@@ -7,8 +7,6 @@ import cn.edu.neu.mgzmsys.entity.HttpResponseEntity;
 import cn.edu.neu.mgzmsys.entity.Volunteer;
 import cn.edu.neu.mgzmsys.service.IChildService;
 import cn.edu.neu.mgzmsys.service.IUserService;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
@@ -80,7 +78,7 @@ public class UserController {
                 child.setUserName((String) map.get("username"));
                 child.setPassword(encodedPassword);
                 child.setChildName((String) map.get("childName"));
-                child.setBirthday((LocalDate) map.get("birthday"));
+                child.setBirthday(LocalDate.parse( (String)map.get("birthday")));
                 child.setHobby((String) map.get("hobby"));
                 child.setAddress( (String)map.get("address"));
                 child.setGender((Integer) map.get("gender"));

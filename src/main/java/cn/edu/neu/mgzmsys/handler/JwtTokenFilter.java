@@ -20,8 +20,11 @@ import java.io.IOException;
 import java.util.Map;
 @Component
 public class JwtTokenFilter extends OncePerRequestFilter {
-    @Autowired
     private SecurityService securityService;
+    @Autowired
+    public void setSecurityService(SecurityService securityService) {
+        this.securityService = securityService;
+    }
 
     /**
      * StringRedisTemplate和RedisTemplate
@@ -65,14 +68,6 @@ public class JwtTokenFilter extends OncePerRequestFilter {
         filterChain.doFilter(httpServletRequest, httpServletResponse);
     }
 
-    /**
-     * 数据加密类
-     *
-     * @return
-     */
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
+
 }
 

@@ -7,6 +7,7 @@ import cn.edu.neu.mgzmsys.handler.NoLoginHandler;
 import cn.edu.neu.mgzmsys.service.impl.SecurityService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -40,18 +41,19 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
      */
     public void configure(HttpSecurity http) throws Exception {
         http.formLogin() //告诉框架自定义页面
-               .loginProcessingUrl("/login") //对应表单提交的action
+               .loginProcessingUrl("/user/login") //对应表单提交的action
                .successHandler(loginSuccessHandler)
                .failureHandler(new LoginFailHandler())
                .permitAll();//对login.html和dologin请求放行
-        http.exceptionHandling()
-                .authenticationEntryPoint(new NoLoginHandler());
         http.authorizeRequests()
 //                .antMatchers("/hello").hasAuthority("anth_techer") //有anth_techer的权限才能访问/hello
 //                .antMatchers("/hello").hasAnyAuthority("anth_techer","hello") //有anth_techer或hello的权限才能访问/hello
 //                .antMatchers("/hello").hasRole("anth_techer") //会在anth_techer加ROLE_前缀
 //                .antMatchers("/hello").permitAll() //配置免登陆接口
+                .antMatchers("/user/register").permitAll()
                 .anyRequest().authenticated(); //所有请求都拦截
+         http.exceptionHandling()
+                .authenticationEntryPoint(new NoLoginHandler()); //未登录处理
         /**
          * 把jwtfilter注入进来
          */

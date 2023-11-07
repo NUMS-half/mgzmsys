@@ -5,6 +5,7 @@ import cn.edu.neu.mgzmsys.entity.Users;
 import cn.edu.neu.mgzmsys.mapper.UserMapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class SecurityService implements UserDetailsService {
     @Autowired
+    @Lazy
     private PasswordEncoder passwordEncoder;
     @Autowired
     private UserMapper userMapper;
@@ -34,7 +36,7 @@ public class SecurityService implements UserDetailsService {
         if(users !=null) {
 
             //username 数据库产查用户信息
-            return new MyUserDetails(users.getUserId(),users.getUserName(),passwordEncoder.encode(users.getPassword()));
+            return new MyUserDetails(users.getUserId(),users.getUserName(),users.getPassword());
         }
         else {
             throw new UsernameNotFoundException("该用户不存在");
