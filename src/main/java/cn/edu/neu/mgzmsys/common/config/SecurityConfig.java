@@ -45,6 +45,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                .successHandler(loginSuccessHandler)
                .failureHandler(new LoginFailHandler())
                .permitAll();//对login.html和dologin请求放行
+        http.exceptionHandling()
+                .authenticationEntryPoint(new NoLoginHandler()); //未登录处理
         http.authorizeRequests()
 //                .antMatchers("/hello").hasAuthority("anth_techer") //有anth_techer的权限才能访问/hello
 //                .antMatchers("/hello").hasAnyAuthority("anth_techer","hello") //有anth_techer或hello的权限才能访问/hello
@@ -52,8 +54,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 //                .antMatchers("/hello").permitAll() //配置免登陆接口
                 .antMatchers("/user/register").permitAll()
                 .anyRequest().authenticated(); //所有请求都拦截
-         http.exceptionHandling()
-                .authenticationEntryPoint(new NoLoginHandler()); //未登录处理
         /**
          * 把jwtfilter注入进来
          */

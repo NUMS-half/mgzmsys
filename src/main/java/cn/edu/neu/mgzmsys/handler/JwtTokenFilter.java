@@ -35,20 +35,20 @@ public class JwtTokenFilter extends OncePerRequestFilter {
                                     HttpServletResponse httpServletResponse,
                                     FilterChain filterChain)
             throws ServletException, IOException {
-        /**
-         *  * 1、判断请求头是否携带jwt
-         *  *   否：放行不处理
-         *  *   是：走到第二步
+        /*
+         * 1、判断请求头是否携带jwt
+         *   否：放行不处理
+         *   是：走到第二步
          */
-        String jwt = httpServletRequest.getHeader("jwt");
+        String jwt = httpServletRequest.getHeader("token");
         if (jwt == null) {
             filterChain.doFilter(httpServletRequest, httpServletResponse);//交给过滤器处理
             return;
         }
-        /**
-         *  * 2、对前端传过来的jwt解密
-         *  *   否：放行不处理
-         *  *   是：走到第三步
+        /*
+         * 2、对前端传过来的jwt解密
+         *   否：放行不处理
+         *   是：走到第三步
          */
         if (!JwtUtil.decode(jwt)) {
             filterChain.doFilter(httpServletRequest, httpServletResponse);

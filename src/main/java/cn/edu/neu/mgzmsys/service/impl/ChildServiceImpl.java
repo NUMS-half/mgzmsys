@@ -32,7 +32,7 @@ public class ChildServiceImpl extends ServiceImpl<ChildMapper, Child> implements
     public Child selectChildInfo(String id) {
     QueryWrapper<Child> queryWrapper = new QueryWrapper<>();
     queryWrapper.select("user_id", "child_name", "gender", "birthday", "address", "phone", "hobby", "description");
-    return  childMapper.selectOne(queryWrapper.eq("child_id", id));
+    return  childMapper.selectOne(queryWrapper.eq("user_id", id));
 
     }
     /**
