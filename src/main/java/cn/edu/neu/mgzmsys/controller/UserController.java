@@ -69,6 +69,7 @@ public class UserController {
             }
             String type = (String) map.get("type");
              String encodedPassword = passwordEncoder.encode((String) map.get("password"));
+             boolean result = false;
              //根据map new一个child对象
             if (type.equals("child")) {
                 // 注册儿童
@@ -84,18 +85,21 @@ public class UserController {
                 child.setGender((Integer) map.get("gender"));
                 child.setPhone((String) map.get("phone"));
                 child.setDescription((String) map.get("description"));
-                boolean result = userService.register(child);
+                result = userService.register(child);
             } else if (type.equals("volunteer")) {
                 // 注册志愿者
                  Volunteer volunteer = new Volunteer();
-                 boolean result = userService.register(volunteer);
+                result = userService.register(volunteer);
+            }
+            if (result) {
+                return HttpResponseEntity.REGISTER_SUCCESS;
+            } else {
+                return HttpResponseEntity.REGISTER_FAIL;
             }
         } catch (Exception e) {
-            httpResponseEntity.setCode("-1");
-            httpResponseEntity.setData(null);
-            httpResponseEntity.setMessage("注册时发生异常，请稍后重试");
+            // 异常处理...
+            return HttpResponseEntity.ERROR;
         }
-        return httpResponseEntity;
     }
 
     /**
@@ -116,21 +120,14 @@ public class UserController {
             boolean result = userService.updatePassword(userId, encodedNewPassword);
             // 更新密码逻辑...
               if ( result ) {
-                httpResponseEntity.setCode("1");
-                httpResponseEntity.setData(null);
-                httpResponseEntity.setMessage("修改密码成功");
+               return HttpResponseEntity.UPDATE_SUCCESS;
             } else {
-                httpResponseEntity.setCode("0");
-                httpResponseEntity.setData(null);
-                httpResponseEntity.setMessage("修改密码失败");
+                return HttpResponseEntity.UPDATE_FAIL;
             }
         } catch (Exception e) {
             // 异常处理...
-            httpResponseEntity.setCode("-1");
-            httpResponseEntity.setData(null);
-            httpResponseEntity.setMessage("修改密码时发生异常，请稍后重试");
+            return HttpResponseEntity.ERROR;
         }
-        return httpResponseEntity;
     }
 }
 

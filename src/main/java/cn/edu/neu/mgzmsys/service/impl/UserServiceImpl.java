@@ -8,6 +8,7 @@ import cn.edu.neu.mgzmsys.mapper.UserMapper;
 import cn.edu.neu.mgzmsys.mapper.VolunteerMapper;
 import cn.edu.neu.mgzmsys.service.IUserService;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 
@@ -60,11 +61,17 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, Users> implements I
         if(users != null){
             return false;
         }
+        QueryWrapper<Child> wrapper = new QueryWrapper<>();
+        //INSERT INTO child ( child_id, child_name, gender, birthday, address, phone, hobby, description) VALUES()
+
         // 不存在则插入用户
         users = new Users();
         users.setUserName(child.getUserName());
         users.setPassword(child.getPassword());
         userMapper.insert(users);
+        child.setUserId(users.getUserId());
+        child.setPassword(null);
+        child.setUserName(null);
         childMapper.insert(child);
         return true;
     }

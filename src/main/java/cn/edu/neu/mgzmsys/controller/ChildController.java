@@ -40,15 +40,14 @@ public class ChildController {
                 throw new NullPointerException();
             }
             cn.edu.neu.mgzmsys.entity.Child child = childService.selectChildInfo(id);
-            httpResponseEntity.setCode("1");
-            httpResponseEntity.setData(child);
-            httpResponseEntity.setMessage("获取儿童信息成功");
+            if ( child != null ) {
+                return httpResponseEntity.get(child);
+            } else {
+                return HttpResponseEntity.GET_FAIL;
+            }
         } catch ( Exception e ) {
-            httpResponseEntity.setCode("-1");
-            httpResponseEntity.setData(null);
-            httpResponseEntity.setMessage("获取儿童信息时发生异常，请稍后重试");
+           return HttpResponseEntity.ERROR;
         }
-        return httpResponseEntity;
     }
     /**
      * 更新儿童信息
@@ -58,24 +57,16 @@ public class ChildController {
     public HttpResponseEntity updateChild(@RequestBody Child child,@RequestHeader ("token")String token) throws ParseException {
         String id= JwtUtil.getUidFromToken(token);
         child.setUserId(id);
-        HttpResponseEntity httpResponseEntity = new HttpResponseEntity();
         try{
             boolean result = childService.updateChildInfo(child);
             if ( result ) {
-                httpResponseEntity.setCode("1");
-                httpResponseEntity.setData(null);
-                httpResponseEntity.setMessage("更新儿童信息成功");
+                return HttpResponseEntity.UPDATE_SUCCESS;
             } else {
-                httpResponseEntity.setCode("0");
-                httpResponseEntity.setData(null);
-                httpResponseEntity.setMessage("更新儿童信息失败");
+               return HttpResponseEntity.UPDATE_FAIL;
             }
         } catch ( Exception e ) {
-            httpResponseEntity.setCode("-1");
-            httpResponseEntity.setData(null);
-            httpResponseEntity.setMessage("更新儿童信息时发生异常，请稍后重试");
+            return HttpResponseEntity.ERROR;
         }
-        return httpResponseEntity;
     }
 }
 

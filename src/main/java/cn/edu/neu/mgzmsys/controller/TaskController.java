@@ -38,15 +38,10 @@ public class TaskController {
                 throw new NullPointerException();
             }
             List<Task> taskList = taskService.getTaskById(id);
-            httpResponseEntity.setCode("1");
-            httpResponseEntity.setData(taskList);
-            httpResponseEntity.setMessage("获取任务成功");
+            return httpResponseEntity.get(taskList);
         } catch ( Exception e ) {
-            httpResponseEntity.setCode("-1");
-            httpResponseEntity.setData(null);
-            httpResponseEntity.setMessage("获取任务时发生异常，请稍后重试");
+            return HttpResponseEntity.ERROR;
         }
-        return httpResponseEntity;
     }
     /**
      * 更新任务
@@ -54,25 +49,17 @@ public class TaskController {
      */
     @PostMapping(value = "/updateTask", headers = "Accept=application/json")
     public HttpResponseEntity updateTask(@RequestBody Map<String, Object> map) {
-        HttpResponseEntity httpResponseEntity = new HttpResponseEntity();
         map.put("finish_at",new Date());
         try{
             boolean result = taskService.updateTask(map);
             if ( result ) {
-                httpResponseEntity.setCode("1");
-                httpResponseEntity.setData(null);
-                httpResponseEntity.setMessage("更新任务成功");
+                return HttpResponseEntity.UPDATE_SUCCESS;
             } else {
-                httpResponseEntity.setCode("-1");
-                httpResponseEntity.setData(null);
-                httpResponseEntity.setMessage("更新任务失败");
+                return HttpResponseEntity.UPDATE_FAIL;
             }
         } catch ( Exception e ) {
-            httpResponseEntity.setCode("-1");
-            httpResponseEntity.setData(null);
-            httpResponseEntity.setMessage("更新任务时发生异常，请稍后重试");
+            return HttpResponseEntity.ERROR;
         }
-        return httpResponseEntity;
     }
 }
 
