@@ -32,7 +32,7 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
         String username=user.getUsername();
         String uid=user.getUid();
         String jwt= JwtUtil.createToken(username,uid);
-
         httpServletResponse.getWriter().write(JSON.toJSONString(new HttpResponseEntity().ok(jwt)));
+        httpServletResponse.setStatus(HttpServletResponse.SC_OK);
     }
 }

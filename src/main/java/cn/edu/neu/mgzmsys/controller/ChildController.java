@@ -5,6 +5,7 @@ import cn.edu.neu.mgzmsys.common.utils.JwtUtil;
 import cn.edu.neu.mgzmsys.entity.Child;
 import cn.edu.neu.mgzmsys.entity.HttpResponseEntity;
 import cn.edu.neu.mgzmsys.service.IChildService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -31,7 +32,7 @@ public class ChildController {
      * @return 儿童信息
      */
     @GetMapping(value = "/getChildById", headers = "Accept=application/json")
-    public HttpResponseEntity getChildById(@RequestHeader ("token")String token) throws ParseException {
+    public ResponseEntity<HttpResponseEntity> getChildById(@RequestHeader ("token")String token) throws ParseException {
 
         String id= JwtUtil.getUidFromToken(token);
         try{
@@ -40,12 +41,12 @@ public class ChildController {
             }
             cn.edu.neu.mgzmsys.entity.Child child = childService.selectChildInfo(id);
             if ( child != null ) {
-                return new HttpResponseEntity().get(child);
+                return new HttpResponseEntity().ok(child).toResponseEntity();
             } else {
-                return HttpResponseEntity.GET_FAIL;
+                return HttpResponseEntity.GET_FAIL.toResponseEntity();
             }
         } catch ( Exception e ) {
-           return HttpResponseEntity.ERROR;
+           return HttpResponseEntity.ERROR.toResponseEntity();
         }
     }
     /**
@@ -53,18 +54,18 @@ public class ChildController {
      * @return 更新是否成功
      */
     @PostMapping(value = "/updateChild", headers = "Accept=application/json")
-    public HttpResponseEntity updateChild(@RequestBody Child child,@RequestHeader ("token")String token) throws ParseException {
+    public ResponseEntity<HttpResponseEntity> updateChild(@RequestBody Child child,@RequestHeader ("token")String token) throws ParseException {
         String id= JwtUtil.getUidFromToken(token);
         child.setUserId(id);
         try{
             boolean result = childService.updateChildInfo(child);
             if ( result ) {
-                return HttpResponseEntity.UPDATE_SUCCESS;
+                return HttpResponseEntity.UPDATE_SUCCESS.toResponseEntity();
             } else {
-               return HttpResponseEntity.UPDATE_FAIL;
+               return HttpResponseEntity.UPDATE_FAIL.toResponseEntity();
             }
         } catch ( Exception e ) {
-            return HttpResponseEntity.ERROR;
+            return HttpResponseEntity.ERROR.toResponseEntity();
         }
     }
 }

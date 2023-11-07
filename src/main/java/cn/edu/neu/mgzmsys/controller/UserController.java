@@ -7,6 +7,7 @@ import cn.edu.neu.mgzmsys.entity.HttpResponseEntity;
 import cn.edu.neu.mgzmsys.entity.Volunteer;
 import cn.edu.neu.mgzmsys.service.IChildService;
 import cn.edu.neu.mgzmsys.service.IUserService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
@@ -108,7 +109,7 @@ public class UserController {
      * @return 修改是否成功
      */
     @PostMapping(value = "/updatePassword", headers = "Accept=application/json")
-    public HttpResponseEntity updatePassword(@RequestBody String password, @RequestHeader("token") String jwt) throws ParseException {
+    public ResponseEntity<HttpResponseEntity> updatePassword(@RequestBody String password, @RequestHeader("token") String jwt) throws ParseException {
         // 使用Spring Security的Authentication对象来获取当前用户
 
         String userId = JwtUtil.getUidFromToken(jwt);
@@ -120,13 +121,13 @@ public class UserController {
             boolean result = userService.updatePassword(userId, encodedNewPassword);
             // 更新密码逻辑...
               if ( result ) {
-               return HttpResponseEntity.UPDATE_SUCCESS;
+               return HttpResponseEntity.UPDATE_SUCCESS.toResponseEntity();
             } else {
-                return HttpResponseEntity.UPDATE_FAIL;
+                return HttpResponseEntity.UPDATE_FAIL.toResponseEntity();
             }
         } catch (Exception e) {
             // 异常处理...
-            return HttpResponseEntity.ERROR;
+            return HttpResponseEntity.ERROR.toResponseEntity();
         }
     }
 }

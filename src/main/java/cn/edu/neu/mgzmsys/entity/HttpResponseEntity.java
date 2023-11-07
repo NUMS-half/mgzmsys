@@ -2,6 +2,8 @@ package cn.edu.neu.mgzmsys.entity;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 
 @Data
 
@@ -50,5 +52,15 @@ public class HttpResponseEntity {
     public HttpResponseEntity (Integer code, String msg) {
         this.code = code;
         this.message = msg;
+    }
+     public ResponseEntity<HttpResponseEntity> toResponseEntity() {
+        // 将整数状态码转换为 HttpStatus 枚举
+        HttpStatus httpStatus = HttpStatus.resolve(this.code);
+        if (httpStatus == null) {
+            // 如果 code 无法解析成有效的 HttpStatus，可以默认为 OK 或自定义错误
+            httpStatus = HttpStatus.OK;
+        }
+        // 返回构建的 ResponseEntity
+        return new ResponseEntity<>(this, httpStatus);
     }
 }
