@@ -34,14 +34,13 @@ public class ChildController {
     public HttpResponseEntity getChildById(@RequestHeader ("token")String token) throws ParseException {
 
         String id= JwtUtil.getUidFromToken(token);
-        HttpResponseEntity httpResponseEntity = new HttpResponseEntity();
         try{
             if ( id == null ){
                 throw new NullPointerException();
             }
             cn.edu.neu.mgzmsys.entity.Child child = childService.selectChildInfo(id);
             if ( child != null ) {
-                return httpResponseEntity.get(child);
+                return new HttpResponseEntity().get(child);
             } else {
                 return HttpResponseEntity.GET_FAIL;
             }

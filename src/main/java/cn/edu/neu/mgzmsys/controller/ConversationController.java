@@ -38,16 +38,16 @@ public class ConversationController {
             String participantId2 = (String) map.get("participantId2");
             Conversation conversation = conversationService.getByTwoParticipantIds(participantId1, participantId2);
             if ( conversation == null ) {
-                httpResponseEntity.setCode("0");
+                httpResponseEntity.setCode(0);
                 httpResponseEntity.setData(null);
                 httpResponseEntity.setMessage("该会话不存在");
             } else {
-                httpResponseEntity.setCode("1");
+                httpResponseEntity.setCode(1);
                 httpResponseEntity.setData(conversation.getConversationId());
                 httpResponseEntity.setMessage("获取成功");
             }
         } catch ( Exception e ) {
-            httpResponseEntity.setCode("-1");
+            httpResponseEntity.setCode(-1);
             httpResponseEntity.setData(null);
             httpResponseEntity.setMessage("获取时发生异常，请稍后重试");
         }
@@ -61,11 +61,11 @@ public class ConversationController {
         HttpResponseEntity httpResponseEntity = new HttpResponseEntity();
         try {
             String participantId = JwtUtil.getUidFromToken(token);
-            httpResponseEntity.setCode("1");
+            httpResponseEntity.setCode(1);
             httpResponseEntity.setData(conversationService.getByParticipantId(participantId));
             httpResponseEntity.setMessage("获取成功");
         } catch ( Exception e ) {
-            httpResponseEntity.setCode("-1");
+            httpResponseEntity.setCode(-1);
             httpResponseEntity.setData(null);
             httpResponseEntity.setMessage("获取时发生异常，请稍后重试");
         }

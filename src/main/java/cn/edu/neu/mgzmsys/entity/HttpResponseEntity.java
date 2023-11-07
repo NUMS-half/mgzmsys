@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class HttpResponseEntity {
 
-    private String code;     //状态码
+    private Integer code;     //状态码
 
     private Object data;     //返回数据
 
@@ -43,11 +43,11 @@ public class HttpResponseEntity {
             ResponseEnum.GET_FAIL.getMsg());
     public static final HttpResponseEntity  ERROR= new HttpResponseEntity (ResponseEnum.ERROR.getCode(),
             ResponseEnum.ERROR.getMsg());
-    public HttpResponseEntity (String code, Object data) {
+    public HttpResponseEntity (Integer code, Object data) {
         this.code = code;
         this.data = data;
     }
-    public HttpResponseEntity (String code, String msg) {
+    public HttpResponseEntity (Integer code, String msg) {
         this.code = code;
         this.message = msg;
     }
