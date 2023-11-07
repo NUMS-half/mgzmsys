@@ -41,8 +41,10 @@ public class ChildServiceImpl extends ServiceImpl<ChildMapper, Child> implements
      */
     @Override
     public boolean updateChildInfo(Child child) {
-        LambdaQueryWrapper<Child> wrapper = new LambdaQueryWrapper<>();
-        wrapper.eq(Child::getUserId, child.getUserId());
+        QueryWrapper<Child> wrapper = new QueryWrapper<>();
+        //生成update child_name,gender,birthday,address,phone,hobby,description from child where child_id = #{userId}的wrapper
+        wrapper.eq("child_id", child.getUserId());
+
         return childMapper.update(child, wrapper) == 1;
     }
 }

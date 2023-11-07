@@ -4,9 +4,9 @@ import java.io.Serializable;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
 
 /**
  * <p>
@@ -17,7 +17,8 @@ import lombok.Setter;
  * @since 2023-11-02
  */
 @Data
-public class User implements Serializable {
+public class Users implements Serializable {
+    @JsonSerialize(using = ToStringSerializer.class)//防止json传过来导致精度缺失
 
     private static final long serialVersionUID = 1L;
 

@@ -11,6 +11,7 @@ import cn.edu.neu.mgzmsys.service.IVolunteerService;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -38,7 +39,7 @@ public class ConversationController {
     private IVolunteerService volunteerService;
 
     @PostMapping(value = "/getId", headers = "Accept=application/json")
-    public HttpResponseEntity getIdByTwoParticipantIds(@RequestBody String participants2id, @RequestHeader("token") String token) {
+    public HttpResponseEntity getIdByTwoParticipantIds(@RequestBody String participants2id, @RequestHeader("token") String token) throws ParseException {
         Map<String, Object> map = new HashMap<>();
         map.put("participantId1", JwtUtil.getUidFromToken(token));
         map.put("participantId2", participants2id);

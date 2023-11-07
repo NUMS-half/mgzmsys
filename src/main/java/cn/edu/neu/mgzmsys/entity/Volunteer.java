@@ -3,8 +3,6 @@ package cn.edu.neu.mgzmsys.entity;
 import java.io.Serializable;
 import java.time.LocalDate;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -18,7 +16,7 @@ import lombok.EqualsAndHashCode;
  */
 @EqualsAndHashCode(callSuper = true)
 @Data
-public class Volunteer extends User implements Serializable {
+public class Volunteer extends Users implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
