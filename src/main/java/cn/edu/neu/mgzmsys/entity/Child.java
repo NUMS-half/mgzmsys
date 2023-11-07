@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.time.LocalDate;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -18,7 +19,7 @@ import lombok.EqualsAndHashCode;
  */
 @EqualsAndHashCode(callSuper = true)
 @Data
-public class Child extends User implements Serializable {
+public class Child extends Users implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -26,7 +27,6 @@ public class Child extends User implements Serializable {
      * 儿童姓名
      */
     private String childName;
-
     /**
      * 儿童性别
      */

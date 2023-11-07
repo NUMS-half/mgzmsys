@@ -1,13 +1,14 @@
 package cn.edu.neu.mgzmsys.service.impl;
 
 import cn.edu.neu.mgzmsys.entity.Child;
-import cn.edu.neu.mgzmsys.entity.User;
+import cn.edu.neu.mgzmsys.entity.Users;
 import cn.edu.neu.mgzmsys.entity.Volunteer;
 import cn.edu.neu.mgzmsys.mapper.ChildMapper;
 import cn.edu.neu.mgzmsys.mapper.UserMapper;
 import cn.edu.neu.mgzmsys.mapper.VolunteerMapper;
 import cn.edu.neu.mgzmsys.service.IUserService;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 
@@ -22,7 +23,7 @@ import javax.annotation.Resource;
  * @since 2023-11-02
  */
 @Service
-public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IUserService {
+public class UserServiceImpl extends ServiceImpl<UserMapper, Users> implements IUserService {
     @Resource
     UserMapper userMapper;
     @Resource
@@ -37,11 +38,11 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
     public String login(String username, String password) {
 
         // 通过用户名查询用户
-        LambdaQueryWrapper<User> lambdaQueryWrapper = new LambdaQueryWrapper<>();
-        lambdaQueryWrapper.eq(username != null, User::getUserName, username);
-        User user = userMapper.selectOne(lambdaQueryWrapper);
-        if (user != null && user.getPassword().equals(password)){
-            return user.getUserId();
+        LambdaQueryWrapper<Users> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+        lambdaQueryWrapper.eq(username != null, Users::getUserName, username);
+        Users users = userMapper.selectOne(lambdaQueryWrapper);
+        if (users != null && users.getPassword().equals(password)){
+            return users.getUserId();
         }
         // 判断用户是否存在，存在则判断密码是否正确
         return null;
@@ -53,36 +54,42 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
     @Override
     public boolean register(Child child){
         // 通过用户名查询用户
-        LambdaQueryWrapper<User> lambdaQueryWrapper = new LambdaQueryWrapper<>();
-        lambdaQueryWrapper.eq(child.getUserName() != null, User::getUserName, child.getUserName());
-        User user = userMapper.selectOne(lambdaQueryWrapper);
+        LambdaQueryWrapper<Users> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+        lambdaQueryWrapper.eq(child.getUserName() != null, Users::getUserName, child.getUserName());
+        Users users = userMapper.selectOne(lambdaQueryWrapper);
         // 判断用户是否存在，存在则返回false
-        if(user != null){
+        if(users != null){
             return false;
         }
+        QueryWrapper<Child> wrapper = new QueryWrapper<>();
+        //INSERT INTO child ( child_id, child_name, gender, birthday, address, phone, hobby, description) VALUES()
+
         // 不存在则插入用户
-        user = new User();
-        user.setUserName(child.getUserName());
-        user.setPassword(child.getPassword());
-        userMapper.insert(user);
+        users = new Users();
+        users.setUserName(child.getUserName());
+        users.setPassword(child.getPassword());
+        userMapper.insert(users);
+        child.setUserId(users.getUserId());
+        child.setPassword(null);
+        child.setUserName(null);
         childMapper.insert(child);
         return true;
     }
     @Override
     public boolean register(Volunteer volunteer){
         // 通过用户名查询用户
-        LambdaQueryWrapper<User> lambdaQueryWrapper = new LambdaQueryWrapper<>();
-        lambdaQueryWrapper.eq(volunteer.getUserName() != null, User::getUserName, volunteer.getUserName());
-        User user = userMapper.selectOne(lambdaQueryWrapper);
+        LambdaQueryWrapper<Users> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+        lambdaQueryWrapper.eq(volunteer.getUserName() != null, Users::getUserName, volunteer.getUserName());
+        Users users = userMapper.selectOne(lambdaQueryWrapper);
         // 判断用户是否存在，存在则返回false
-        if(user != null){
+        if(users != null){
             return false;
         }
         // 不存在则插入用户
-         user = new User();
-        user.setUserName(volunteer.getUserName());
-        user.setPassword(volunteer.getPassword());
-        userMapper.insert(user);
+         users = new Users();
+        users.setUserName(volunteer.getUserName());
+        users.setPassword(volunteer.getPassword());
+        userMapper.insert(users);
         volunteerMapper.insert(volunteer);
         return true;
     }
@@ -92,8 +99,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
      */
     @Override
     public boolean updatePassword(String id, String password){
-        User user = userMapper.selectById(id);
-        user.setPassword(password);
-        return userMapper.updateById(user) > 0;
+        Users users = userMapper.selectById(id);
+        users.setPassword(password);
+        return userMapper.updateById(users) > 0;
     }
 }

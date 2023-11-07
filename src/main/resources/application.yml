@@ -30,6 +30,7 @@ spring:
     user:
       name: user
       password: pwd123
+
 mybatis-plus:
   type-aliases-package: cn.edu.neu.mgzmsys.entity
   configuration:

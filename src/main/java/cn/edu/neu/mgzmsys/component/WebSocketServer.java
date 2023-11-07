@@ -1,6 +1,8 @@
 package cn.edu.neu.mgzmsys.component;
 
+import cn.edu.neu.mgzmsys.entity.Conversation;
 import cn.edu.neu.mgzmsys.entity.Message;
+import cn.edu.neu.mgzmsys.service.IConversationService;
 import cn.edu.neu.mgzmsys.service.IMessageService;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
@@ -14,9 +16,7 @@ import javax.websocket.server.PathParam;
 import javax.websocket.server.ServerEndpoint;
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.Map;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -29,18 +29,25 @@ public class WebSocketServer {
 
     private static IMessageService messageService;
 
+    private static IConversationService conversationService;
+
     @Autowired
     public void setMessageService(IMessageService messageService) {
         WebSocketServer.messageService = messageService;
     }
 
+    @Autowired
+    public void setConversationService(IConversationService conversationService) {
+        WebSocketServer.conversationService = conversationService;
+    }
+
     // 连接超时时间(60分钟)
     private static final long SESSION_TIMEOUT = 60 * 60 * 1000;
 
-    // 日志记录器
+    // 控制台日志记录器
     private static final Logger log = LoggerFactory.getLogger(WebSocketServer.class);
 
-    // 记录当前在线连接数(客户端个数)
+    // 记录当前用户个数
     protected static final Map<String, Session> sessionMap = new ConcurrentHashMap<>();
 
     /**
@@ -55,7 +62,15 @@ public class WebSocketServer {
         startSessionTimeoutTask(userId);
 
         // 从MQ中获取目标用户的消息
-
+        List<Conversation> conversationList = conversationService.getByParticipantId(userId);
+        for ( Conversation conversation : conversationList ) {
+            Queue<Message> messageQueue = messageService.getSentMessages(conversation.getConversationId());
+            while ( !messageQueue.isEmpty() ) {
+                Message message = messageQueue.poll();
+                // 处理消息，判断目标用户是否在线
+                this.processMessage(message);
+            }
+        }
     }
 
     /**
@@ -64,16 +79,11 @@ public class WebSocketServer {
     @OnClose
     public void onClose(Session session, @PathParam("userId") String userId) {
         sessionMap.remove(userId);
-        log.info("有1连接关闭，移除userId={}的用户session, 当前在线总人数为:{}", userId, sessionMap.size());
+        log.info("userId={}的用户离线, 当前在线总人数为:{}", userId, sessionMap.size());
     }
 
     /**
      * 收到客户端消息后调用的方法
-     * 后台收到客户端发送过来的消息
-     * onMessage 是一个消息的中转站
-     * 接受 浏览器端 socket.send 发送过来的 json数据
-     *
-     * @param message 客户端发送过来的消息
      */
     @OnMessage
     public void onMessage(String message, Session session, @PathParam("userId") String userId) {
@@ -91,16 +101,13 @@ public class WebSocketServer {
         sendMessage.setMessageType(obj.getInt("messageType"));
         sendMessage.setMessageStatus(0);
 
-        // 保存消息
-        if ( messageService.saveMessage(sendMessage) ) {
-            log.info("消息保存数据库成功");
-        } else {
-            log.error("消息保存失败");
-        }
         // 处理消息，判断目标用户是否在线
         this.processMessage(sendMessage);
     }
 
+    /**
+     * 发生错误时调用的方法
+     */
     @OnError
     public void onError(Session session, Throwable error) {
         log.error("发生错误");
@@ -108,7 +115,7 @@ public class WebSocketServer {
     }
 
     /**
-     * 消息处理方法
+     * 消息处调用的方法
      */
     private void processMessage(Message message) {
         // 解析消息
@@ -116,7 +123,12 @@ public class WebSocketServer {
         Session toSession = sessionMap.get(receiveUserId);
 
         if ( toSession != null ) {
-            // 用户在线，推送消息给目标用户
+            // 用户在线，消息保存到数据库，并推送给目标用户
+            if ( messageService.saveMessage(message) ) {
+                log.info("消息保存数据库成功");
+            } else {
+                log.error("消息保存失败");
+            }
             JSONObject jsonObject = new JSONObject(message);
             jsonObject.set("messageTime", message.getMessageTime().toString());
             sendMessage(jsonObject.toString(), toSession);
@@ -128,7 +140,6 @@ public class WebSocketServer {
         }
     }
 
-
     /**
      * 服务器发送消息给客户端
      */
@@ -136,20 +147,6 @@ public class WebSocketServer {
         try {
             log.info("服务器给客户端[{}]发送消息{}", toSession.getId(), message);
             toSession.getBasicRemote().sendText(message);
-        } catch ( Exception e ) {
-            log.error("服务器发送消息给客户端失败", e);
-        }
-    }
-
-    /**
-     * 服务器发送消息给所有客户端
-     */
-    private void sendAllMessage(String message) {
-        try {
-            for ( Session session : sessionMap.values() ) {
-                log.info("服务器给客户端[{}]发送消息{}", session.getId(), message);
-                session.getBasicRemote().sendText(message);
-            }
         } catch ( Exception e ) {
             log.error("服务器发送消息给客户端失败", e);
         }
@@ -176,15 +173,5 @@ public class WebSocketServer {
             }
         }, SESSION_TIMEOUT);
     }
-
-//    /**
-//     * 接收来自 RabbitMQ 队列的消息
-//     */
-//    @RabbitListener(queues = "chat.queue")
-//    public void receiveMessageFromChatQueue(Message message) {
-//        // 当有新消息到达队列时，处理消息
-//        System.out.println("监听并接收到消息" + message);
-//        processMessage(message);
-//    }
 }
 
