@@ -1,5 +1,6 @@
 package cn.edu.neu.mgzmsys.component;
 
+import cn.edu.neu.mgzmsys.common.utils.JwtUtil;
 import cn.edu.neu.mgzmsys.controller.FileController;
 import cn.edu.neu.mgzmsys.entity.Conversation;
 import cn.edu.neu.mgzmsys.entity.Message;
@@ -16,6 +17,7 @@ import javax.websocket.*;
 import javax.websocket.server.PathParam;
 import javax.websocket.server.ServerEndpoint;
 import java.io.IOException;
+import java.text.ParseException;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -25,7 +27,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 
 @Component
-@ServerEndpoint(value = "/IMServer/{userId}")
+@ServerEndpoint(value = "/IMServer/{token}")
 public class WebSocketServer {
 
     // 连接超时时间(60分钟)
@@ -55,7 +57,9 @@ public class WebSocketServer {
      * 连接建立成功调用的方法
      */
     @OnOpen
-    public void onOpen(Session session, @PathParam("userId") String userId) {
+    public void onOpen(Session session, @PathParam("token") String token) throws ParseException {
+
+        String userId = JwtUtil.getUidFromToken(token);
 
         // 将新登录的用户session以及id加入sessionMap
         sessionMap.put(userId, session);
@@ -85,7 +89,8 @@ public class WebSocketServer {
      * 连接关闭调用的方法
      */
     @OnClose
-    public void onClose(Session session, @PathParam("userId") String userId) {
+    public void onClose(Session session, @PathParam("token") String token) throws ParseException {
+        String userId = JwtUtil.getUidFromToken(token);
         sessionMap.remove(userId);
         log.info("userId={}的用户离线, 当前在线总人数为:{}", userId, sessionMap.size());
     }
@@ -94,7 +99,8 @@ public class WebSocketServer {
      * 收到客户端消息后调用的方法
      */
     @OnMessage
-    public void onMessage(String message, Session session, @PathParam("userId") String userId) {
+    public void onMessage(String message, Session session, @PathParam("token") String token) throws ParseException {
+        String userId = JwtUtil.getUidFromToken(token);
         log.info("服务器收到用户(username:{})的消息:{}", userId, message);
 
         // 获取客户端发送过来的消息内容
