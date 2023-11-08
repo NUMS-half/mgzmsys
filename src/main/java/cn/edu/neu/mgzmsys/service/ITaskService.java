@@ -25,4 +25,6 @@ public interface ITaskService extends IService<Task> {
      * @return 更新是否成功
      */
     boolean updateTask(Map<String, Object> map);
+
+    Map<String,Object> selectTask(Map<String, Object> map);
 }

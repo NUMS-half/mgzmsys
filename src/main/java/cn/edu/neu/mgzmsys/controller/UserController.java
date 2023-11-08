@@ -113,8 +113,6 @@ public class UserController {
         // 使用Spring Security的Authentication对象来获取当前用户
 
         String userId = JwtUtil.getUidFromToken(jwt);
-
-        HttpResponseEntity httpResponseEntity = new HttpResponseEntity();
         try {
             // 加密新密码
             String encodedNewPassword = passwordEncoder.encode(password);

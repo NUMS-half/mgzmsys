@@ -10,4 +10,8 @@ import java.util.Map;
 public interface TaskChildMapper  {
 
     boolean updateChildTask(Map<String, Object> map);
+    /**
+     * 查询任务
+     */
+    Map<String,Object> selectChildTask(Map<String, Object> map);
 }
