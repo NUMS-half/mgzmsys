@@ -34,5 +34,4 @@ public class VolunteerServiceImpl extends ServiceImpl<VolunteerMapper, Volunteer
         return volunteerMapper.selectOne(wrapper.eq("user_id", id));
     }
 
-
 }

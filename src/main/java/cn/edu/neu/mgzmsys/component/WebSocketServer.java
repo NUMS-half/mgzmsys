@@ -1,5 +1,6 @@
 package cn.edu.neu.mgzmsys.component;
 
+import cn.edu.neu.mgzmsys.controller.FileController;
 import cn.edu.neu.mgzmsys.entity.Conversation;
 import cn.edu.neu.mgzmsys.entity.Message;
 import cn.edu.neu.mgzmsys.service.IConversationService;
@@ -91,15 +92,14 @@ public class WebSocketServer {
 
         // 获取客户端发送过来的消息内容
         JSONObject obj = JSONUtil.parseObj(message);
-        LocalDateTime localDateTime = LocalDateTime.now();
         Message sendMessage = new Message();
         sendMessage.setConversationId(obj.getStr("conversationId"));
         sendMessage.setPosterId(obj.getStr("posterId"));
         sendMessage.setReceiveId(obj.getStr("receiveId"));
         sendMessage.setMessageBody(obj.getStr("messageBody"));
-        sendMessage.setMessageTime(localDateTime);
+        sendMessage.setMessageTime(LocalDateTime.now());
         sendMessage.setMessageType(obj.getInt("messageType"));
-        sendMessage.setMessageStatus(0);
+        sendMessage.setMessageStatus(obj.getInt("messageStatus"));
 
         // 处理消息，判断目标用户是否在线
         this.processMessage(sendMessage);
@@ -122,22 +122,52 @@ public class WebSocketServer {
         String receiveUserId = message.getReceiveId();
         Session toSession = sessionMap.get(receiveUserId);
 
-        if ( toSession != null ) {
-            // 用户在线，消息保存到数据库，并推送给目标用户
-            if ( messageService.saveMessage(message) ) {
-                log.info("消息保存数据库成功");
-            } else {
-                log.error("消息保存失败");
-            }
-            JSONObject jsonObject = new JSONObject(message);
-            jsonObject.set("messageTime", message.getMessageTime().toString());
-            sendMessage(jsonObject.toString(), toSession);
-            log.info("发送给用户(userId:{}), 消息: {}", receiveUserId, jsonObject);
-        } else {
-            // 用户不在线，将消息存储到MQ中
-            messageService.handleSentMessage(message);
-            log.info("用户(userId:{})不在线，消息推送至MQ", receiveUserId);
+        JSONObject jsonObject = new JSONObject(message);
+        switch ( message.getMessageType() ) {
+            case 0:
+                // 文字消息
+                if ( toSession != null ) {
+                    // 用户在线，消息保存到数据库，并推送给目标用户
+                    if ( messageService.saveMessage(message) ) {
+                        System.out.println("新保存的消息ID：" + message.getMessageId());
+                        log.info("消息保存数据库成功");
+                        jsonObject.set("messageId", message.getMessageId());
+                        jsonObject.set("messageTime", message.getMessageTime().toString());
+                        sendMessage(jsonObject.toString(), toSession);
+                        log.info("发送给用户(userId:{}), 消息: {}", receiveUserId, jsonObject);
+                    } else {
+                        log.error("消息保存失败");
+                    }
+                } else {
+                    // 用户不在线，将消息存储到MQ中
+                    messageService.handleSentMessage(message);
+                    log.info("用户(userId:{})不在线，消息推送至MQ", receiveUserId);
+                }
+                break;
+            case 1:
+                // 文件消息(messageBody为文件名才可以!!!!!!)
+                if ( messageService.saveMessage(message) ) {
+                    System.out.println("新保存的消息ID：" + message.getMessageId());
+                    log.info("消息保存数据库成功");
+                    jsonObject.set("messageId", message.getMessageId());
+                    jsonObject.set("messageBody", FileController.FILE_UPLOAD_DIRECTORY +
+                            message.getConversationId() + "/" + message.getMessageBody());
+                    if ( toSession != null ) {
+                        sendMessage(jsonObject.toString(), toSession);
+                        log.info("发送给用户(userId:{}), 文件消息: {}", receiveUserId, jsonObject);
+                    } else {
+                        messageService.handleSentMessage(message);
+                        log.info("用户(userId:{})不在线，消息推送至MQ", receiveUserId);
+                    }
+                } else {
+                    log.error("消息保存失败");
+                }
+                break;
+            default:
+                log.error("消息类型错误");
+                break;
         }
+
     }
 
     /**
