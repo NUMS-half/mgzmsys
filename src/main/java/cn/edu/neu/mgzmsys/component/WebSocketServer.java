@@ -62,7 +62,11 @@ public class WebSocketServer {
         String userId = JwtUtil.getUidFromToken(token);
 
         // 将新登录的用户session以及id加入sessionMap
-        sessionMap.put(userId, session);
+        sessionMap.
+
+
+
+                put(userId, session);
         log.info("有新用户(userId:{})加入, 当前在线总人数为:{}", userId, sessionMap.size());
 
         // 向客户端返回sessionMap,用于告知用户在线人数
@@ -109,7 +113,7 @@ public class WebSocketServer {
         // 创建Message对象,并将客户端发送的消息进行转换
         Message sendMessage = new Message();
         sendMessage.setConversationId(obj.getStr("conversationId"));
-        sendMessage.setPosterId(obj.getStr("posterId"));
+        sendMessage.setPosterId(userId);
         sendMessage.setReceiveId(obj.getStr("receiveId"));
         sendMessage.setMessageBody(obj.getStr("messageBody"));
         sendMessage.setMessageTime(LocalDateTime.now());

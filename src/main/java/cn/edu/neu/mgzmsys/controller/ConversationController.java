@@ -5,6 +5,7 @@ import cn.edu.neu.mgzmsys.common.utils.JwtUtil;
 import cn.edu.neu.mgzmsys.entity.Child;
 import cn.edu.neu.mgzmsys.entity.Conversation;
 import cn.edu.neu.mgzmsys.entity.HttpResponseEntity;
+import cn.edu.neu.mgzmsys.entity.Volunteer;
 import cn.edu.neu.mgzmsys.service.IChildService;
 import cn.edu.neu.mgzmsys.service.IConversationService;
 import cn.edu.neu.mgzmsys.service.IVolunteerService;
@@ -70,13 +71,24 @@ public class ConversationController {
             for ( Conversation conversation : conversationList ) {
                 Map<String, Object> responseMap = new HashMap<>();
                 responseMap.put("conversation", conversation);
-                Child child = childService.selectChildInfo(conversation.getParticipantTwoId());
+                Child child = null;
+                if (conversation.getParticipantOneId().equals(participantId)) {
+                    child = childService.selectChildInfo(conversation.getParticipantTwoId());
+                } else {
+                    child = childService.selectChildInfo(conversation.getParticipantOneId());
+                }
                 if ( child != null ) {
                     responseMap.put("child", child);
                     responseMap.put("volunteer", null);
                 } else {
                     responseMap.put("child", null);
-                    responseMap.put("volunteer", volunteerService.selectVolunteerInfo(conversation.getParticipantTwoId()));
+                    Volunteer volunteer = null;
+                    if (conversation.getParticipantOneId().equals(participantId)) {
+                        volunteer = volunteerService.selectVolunteerInfo(conversation.getParticipantTwoId());
+                    } else {
+                        volunteer = volunteerService.selectVolunteerInfo(conversation.getParticipantOneId());
+                    }
+                    responseMap.put("volunteer", volunteer);
                 }
                 responseMapList.add(responseMap);
             }
