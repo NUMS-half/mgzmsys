@@ -13,4 +13,9 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface IVolunteerService extends IService<Volunteer> {
 
+    /**
+     * 查询志愿者信息
+     * @return 志愿者信息
+     */
+    public Volunteer selectVolunteerInfo(String id);
 }
