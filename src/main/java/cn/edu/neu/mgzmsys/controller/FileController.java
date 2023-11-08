@@ -1,23 +1,18 @@
 package cn.edu.neu.mgzmsys.controller;
 
 import cn.edu.neu.mgzmsys.entity.HttpResponseEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
-import java.io.IOException;
 import java.nio.file.Files;
-
-import static org.springframework.http.ResponseEntity.ok;
 
 @RestController
 @RequestMapping("/file")
 public class FileController {
 
-    public static final String FILE_UPLOAD_DIRECTORY = "/mgzm/file_upload/message_files";
+    public static final String FILE_UPLOAD_DIRECTORY = "D:/mgzm/file_upload/message_files";
 
     @PostMapping(value = "/upload", headers = "Accept=application/json")
     public ResponseEntity<HttpResponseEntity> uploadFile(@RequestBody String messageId, @RequestBody MultipartFile file) {
