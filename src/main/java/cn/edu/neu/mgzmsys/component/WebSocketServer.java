@@ -132,6 +132,7 @@ public class WebSocketServer {
                         System.out.println("新保存的消息ID：" + message.getMessageId());
                         log.info("消息保存数据库成功");
                         jsonObject.set("messageId", message.getMessageId());
+                        jsonObject.set("messageStatus", 1);
                         jsonObject.set("messageTime", message.getMessageTime().toString());
                         sendMessage(jsonObject.toString(), toSession);
                         log.info("发送给用户(userId:{}), 消息: {}", receiveUserId, jsonObject);
@@ -140,6 +141,8 @@ public class WebSocketServer {
                     }
                 } else {
                     // 用户不在线，将消息存储到MQ中
+                    message.setMessageStatus(0);
+                    messageService.saveMessage(message);
                     messageService.handleSentMessage(message);
                     log.info("用户(userId:{})不在线，消息推送至MQ", receiveUserId);
                 }
