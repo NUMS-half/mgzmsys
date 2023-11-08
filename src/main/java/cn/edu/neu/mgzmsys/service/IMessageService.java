@@ -19,7 +19,7 @@ public interface IMessageService extends IService<Message> {
     /**
      * 查询消息
      */
-    List<Message> selectMessage(String connectionId);
+    List<Message> selectMessage(String connectionId,String senderId);
 
     /**
      * 消息队列存储离线发送的消息

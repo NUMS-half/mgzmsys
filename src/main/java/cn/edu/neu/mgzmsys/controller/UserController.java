@@ -15,6 +15,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.text.ParseException;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -33,34 +34,6 @@ public class UserController {
     @Resource
     private PasswordEncoder passwordEncoder;
 
-//    @PostMapping(value = "/login", headers = "Accept=application/json")
-//    public HttpResponseEntity login(@RequestBody Map<String,Object> map) {
-//        HttpResponseEntity httpResponseEntity = new HttpResponseEntity();
-//        String username=map.get("username").toString();
-//        String password=map.get("password").toString();
-//        try{
-//            if ( username == null || password == null ) {
-//                throw new NullPointerException();
-//            }
-//            String uid = userService.login(username, password);
-//            if ( uid!=null ) {
-//                httpResponseEntity.setToken(JwtUtil.createToken(username,uid));
-//                httpResponseEntity.setCode("1");
-//                httpResponseEntity.setData(null);
-//                httpResponseEntity.setMessage("登录成功");
-//            } else {
-//                httpResponseEntity.setCode("0");
-//                httpResponseEntity.setData(null);
-//                httpResponseEntity.setMessage("用户名或密码错误");
-//            }
-//        } catch ( Exception e ) {
-//            httpResponseEntity.setCode("-1");
-//            httpResponseEntity.setData(null);
-//            httpResponseEntity.setMessage("登录时发生异常，请稍后重试");
-//        }
-//        return httpResponseEntity;
-//    }
-
     @PostMapping(value = "/register", headers = "Accept=application/json")
     public HttpResponseEntity register(@RequestBody Map<String, Object> map) {
         HttpResponseEntity httpResponseEntity = new HttpResponseEntity();
@@ -69,9 +42,9 @@ public class UserController {
                 throw new NullPointerException();
             }
             String type = (String) map.get("type");
-             String encodedPassword = passwordEncoder.encode((String) map.get("password"));
-             boolean result = false;
-             //根据map new一个child对象
+            String encodedPassword = passwordEncoder.encode((String) map.get("password"));
+            boolean result = false;
+            //根据map new一个child对象
             if (type.equals("child")) {
                 // 注册儿童
                 // 注册逻辑...
@@ -80,16 +53,16 @@ public class UserController {
                 child.setUserName((String) map.get("username"));
                 child.setPassword(encodedPassword);
                 child.setChildName((String) map.get("childName"));
-                child.setBirthday(LocalDate.parse( (String)map.get("birthday")));
+                child.setBirthday(LocalDate.parse((String) map.get("birthday")));
                 child.setHobby((String) map.get("hobby"));
-                child.setAddress( (String)map.get("address"));
+                child.setAddress((String) map.get("address"));
                 child.setGender((Integer) map.get("gender"));
                 child.setPhone((String) map.get("phone"));
                 child.setDescription((String) map.get("description"));
                 result = userService.register(child);
             } else if (type.equals("volunteer")) {
                 // 注册志愿者
-                 Volunteer volunteer = new Volunteer();
+                Volunteer volunteer = new Volunteer();
                 result = userService.register(volunteer);
             }
             if (result) {
@@ -118,11 +91,28 @@ public class UserController {
             String encodedNewPassword = passwordEncoder.encode(password);
             boolean result = userService.updatePassword(userId, encodedNewPassword);
             // 更新密码逻辑...
-              if ( result ) {
-               return HttpResponseEntity.UPDATE_SUCCESS.toResponseEntity();
+            if (result) {
+                return HttpResponseEntity.UPDATE_SUCCESS.toResponseEntity();
             } else {
                 return HttpResponseEntity.UPDATE_FAIL.toResponseEntity();
             }
+        } catch (Exception e) {
+            // 异常处理...
+            return HttpResponseEntity.ERROR.toResponseEntity();
+        }
+    }
+
+    /**
+     * 查询用户信息
+     *
+     * @return 用户信息
+     */
+    @GetMapping(value = "/searchUserInfo", headers = "Accept=application/json")
+    public ResponseEntity<HttpResponseEntity> getUserInfo(@RequestBody String name) throws ParseException {
+        try {
+            // 查询用户信息逻辑...
+            Map<String, Object> userInfo = userService.selectUser(name);
+            return new HttpResponseEntity().get(userInfo).toResponseEntity();
         } catch (Exception e) {
             // 异常处理...
             return HttpResponseEntity.ERROR.toResponseEntity();

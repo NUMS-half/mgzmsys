@@ -1,6 +1,7 @@
 package cn.edu.neu.mgzmsys.controller;
 
 
+import cn.edu.neu.mgzmsys.common.utils.JwtUtil;
 import cn.edu.neu.mgzmsys.entity.HttpResponseEntity;
 import cn.edu.neu.mgzmsys.entity.Message;
 import cn.edu.neu.mgzmsys.service.IMessageService;
@@ -33,12 +34,13 @@ public class MessageController {
      * 查询conservation的消息记录
      */
     @GetMapping(value = "/history/{conversationId}", headers = "Accept=application/json")
-    public ResponseEntity<HttpResponseEntity> getHistoryMessage(@PathVariable("conversationId") String conversationId) {
+    public ResponseEntity<HttpResponseEntity> getHistoryMessage(@PathVariable("conversationId") String conversationId,@RequestHeader("token") String token) {
         try {
+            String senderId = JwtUtil.getUidFromToken(token);
             if ( conversationId == null ) {
                 throw new NullPointerException();
             }
-            return new HttpResponseEntity().get(messageService.selectMessage(conversationId)).toResponseEntity();
+            return new HttpResponseEntity().get(messageService.selectMessage(conversationId,senderId)).toResponseEntity();
         } catch ( Exception e ) {
             return HttpResponseEntity.ERROR.toResponseEntity();
         }

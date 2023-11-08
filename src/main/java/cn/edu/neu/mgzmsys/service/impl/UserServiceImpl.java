@@ -13,6 +13,9 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -102,5 +105,23 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, Users> implements I
         Users users = userMapper.selectById(id);
         users.setPassword(password);
         return userMapper.updateById(users) > 0;
+    }
+    /**
+     * 查询用户信息
+     * @return 用户信息
+     */
+    //在child表和volunteer表中查找
+    @Override
+    public Map<String,Object> selectUser(String name){
+       QueryWrapper<Child> wrapper = new QueryWrapper<>();
+       wrapper.select("user_id", "child_name", "gender", "birthday", "address", "phone", "hobby", "description").eq("child_name",name);
+       List<Child> childList= childMapper.selectList(wrapper);
+        QueryWrapper<Volunteer> wrapper1 = new QueryWrapper<>();
+       wrapper1.select("user_id", "volunteer_name", "gender", "volunteer_birthday","phone", "description").eq("volunteer_name",name);
+       List<Volunteer> volunteerList= volunteerMapper.selectList(wrapper1);
+       Map<String,Object> map = new HashMap<>();
+       map.put("child",childList);
+       map.put("volunteer",volunteerList);
+         return map;
     }
 }
