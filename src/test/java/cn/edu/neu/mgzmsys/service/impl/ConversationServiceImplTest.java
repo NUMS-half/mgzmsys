@@ -18,8 +18,8 @@ public class ConversationServiceImplTest {
     @Test
     public void setupConversation() {
         conversationService.setupConversation(new HashMap<String, String>() {{
-            put("participation1", "101");
-            put("participation2", "103");
+            put("participation1", "a7cbd12084363755c4b5ca9d60d2ed2f");
+            put("participation2", "c8c4b70cf4d4541c5124a9cd8b555c5a");
         }});
     }
 }

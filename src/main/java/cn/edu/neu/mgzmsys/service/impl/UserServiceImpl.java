@@ -82,7 +82,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, Users> implements I
     public boolean register(Volunteer volunteer){
         // 通过用户名查询用户
         LambdaQueryWrapper<Users> lambdaQueryWrapper = new LambdaQueryWrapper<>();
-        lambdaQueryWrapper.eq(volunteer.getUserName() != null, Users::getUserName, volunteer.getUserName());
+        lambdaQueryWrapper.eq(volunteer.getName() != null, Users::getUserName, volunteer.getName());
         Users users = userMapper.selectOne(lambdaQueryWrapper);
         // 判断用户是否存在，存在则返回false
         if(users != null){
@@ -90,7 +90,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, Users> implements I
         }
         // 不存在则插入用户
          users = new Users();
-        users.setUserName(volunteer.getUserName());
+        users.setUserName(volunteer.getName());
         users.setPassword(volunteer.getPassword());
         userMapper.insert(users);
         volunteerMapper.insert(volunteer);
@@ -117,7 +117,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, Users> implements I
        wrapper.select("user_id", "child_name", "gender", "birthday", "address", "phone", "hobby", "description").eq("child_name",name);
        List<Child> childList= childMapper.selectList(wrapper);
         QueryWrapper<Volunteer> wrapper1 = new QueryWrapper<>();
-       wrapper1.select("user_id", "volunteer_name", "gender", "volunteer_birthday","phone", "description").eq("volunteer_name",name);
+       wrapper1.select("id", "name", "birth", "sex", "description","location","university_name", "phone_num").eq("name",name);
        List<Volunteer> volunteerList= volunteerMapper.selectList(wrapper1);
        Map<String,Object> map = new HashMap<>();
        map.put("child",childList);

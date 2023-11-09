@@ -9,13 +9,8 @@ import com.baomidou.mybatisplus.extension.service.IService;
  * </p>
  *
  * @author team15
- * @since 2023-11-02
+ * @since 2023-11-09
  */
 public interface IVolunteerService extends IService<Volunteer> {
-
-    /**
-     * 查询志愿者信息
-     * @return 志愿者信息
-     */
-    public Volunteer selectVolunteerInfo(String id);
+Volunteer selectVolunteerInfo(String id);
 }
