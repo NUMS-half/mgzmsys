@@ -53,6 +53,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 //                .antMatchers("/hello").hasRole("anth_techer") //会在anth_techer加ROLE_前缀
 //                .antMatchers("/hello").permitAll() //配置免登陆接口
                 .antMatchers("/user/register").permitAll()
+                .antMatchers("/IMServer/**").permitAll()
                 .anyRequest().authenticated(); //所有请求都拦截
         /**
          * 把jwtfilter注入进来
