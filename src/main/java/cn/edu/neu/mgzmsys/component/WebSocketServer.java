@@ -68,7 +68,7 @@ public class WebSocketServer {
         // 向客户端返回sessionMap,用于告知用户在线人数
         JSONObject jsonObject = new JSONObject(sessionMap);
         jsonObject.set("responseType", "0"); // 响应信息类型：0-在线人数
-        sendMessage(jsonObject.toString(), session);
+//        sendMessage(jsonObject.toString(), session);
 
         // 设置session的过期时间
         startSessionTimeoutTask(userId);
