@@ -2,9 +2,8 @@ package cn.edu.neu.mgzmsys.entity;
 
 import java.io.Serializable;
 import java.time.LocalDate;
-
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * <p>
@@ -12,38 +11,31 @@ import lombok.EqualsAndHashCode;
  * </p>
  *
  * @author team15
- * @since 2023-11-02
+ * @since 2023-11-09
  */
-@EqualsAndHashCode(callSuper = true)
-@Data
-public class Volunteer extends Users implements Serializable {
+@Getter
+@Setter
+public class Volunteer implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    /**
-     * 志愿者姓名
-     */
-    private String volunteerName;
+    private Integer id;
 
-    /**
-     * 志愿者出生日期
-     */
-    private LocalDate volunteerBirthday;
+    private String password;
 
-    /**
-     * 性别
-     */
-    private Integer gender;
+    private String name;
 
-    /**
-     * 描述
-     */
+    private String sex;
+
+    private String phoneNum;
+
+    private LocalDate birth;
+
+    private String location;
+
+    private String universityName;
+
     private String description;
-
-    /**
-     * 电话
-     */
-    private String phone;
 
 
 }

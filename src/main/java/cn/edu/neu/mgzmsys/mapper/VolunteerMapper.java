@@ -2,7 +2,6 @@ package cn.edu.neu.mgzmsys.mapper;
 
 import cn.edu.neu.mgzmsys.entity.Volunteer;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import org.apache.ibatis.annotations.Mapper;
 
 /**
  * <p>
@@ -10,10 +9,8 @@ import org.apache.ibatis.annotations.Mapper;
  * </p>
  *
  * @author team15
- * @since 2023-11-02
+ * @since 2023-11-09
  */
-
-@Mapper
 public interface VolunteerMapper extends BaseMapper<Volunteer> {
 
 }
