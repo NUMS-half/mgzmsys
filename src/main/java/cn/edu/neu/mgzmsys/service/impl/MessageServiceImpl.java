@@ -41,7 +41,7 @@ public class MessageServiceImpl extends ServiceImpl<MessageMapper, Message> impl
     public List<Message> selectMessage(String connectionId,String senderId) {
         LambdaQueryWrapper<Message> lambdaQueryWrapper = new LambdaQueryWrapper<>();
         //按照message_time时间排序
-        lambdaQueryWrapper.and(i->i.eq(Message::getConversationId, connectionId).eq(Message::getMessageStatus,1)).or(i->i.eq(Message::getPosterId,senderId).eq(Message::getMessageStatus,0)).orderByAsc(Message::getMessageTime);
+        lambdaQueryWrapper.and(i->i.and(e->e.eq(Message::getMessageStatus,2)).or(e->e.eq(Message::getPosterId,senderId).eq(Message::getMessageStatus,1))).orderByAsc(Message::getMessageTime).eq(Message::getConversationId,connectionId);
         return messageMapper.selectList(lambdaQueryWrapper);
     }
 
