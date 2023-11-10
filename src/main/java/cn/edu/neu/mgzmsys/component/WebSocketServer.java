@@ -201,6 +201,31 @@ public class WebSocketServer {
 //                    log.error("消息保存失败");
 //                }
 //                break;
+            case 1:
+                // 文件消息(messageBody为文件名才可以!!!!!!)
+                if ( messageService.saveMessage(message) ) {
+                    System.out.println("新保存的消息ID：" + message.getMessageId());
+                    log.info("消息保存数据库成功");
+                    jsonObject.set("messageId", message.getMessageId());
+                    jsonObject.set("messageTime", message.getMessageTime().toString());
+                    jsonObject.set("messageBody", FileController.FILE_UPLOAD_DIRECTORY +
+                            message.getConversationId() + "/" + message.getMessageBody());
+                    if ( toSession != null ) {
+                        jsonObject.set("responseType", "2"); // 响应信息类型：2-文件消息
+                        sendMessage(jsonObject.toString(), toSession);
+                        log.info("发送给用户(userId:{}), 文件消息: {}", receiveUserId, jsonObject);
+                    } else {
+                        messageService.handleSentMessage(message);
+                        log.info("用户(userId:{})不在线，消息推送至MQ", receiveUserId);
+                    }
+                } else {
+                    log.error("消息保存失败");
+                }
+                break;
+            case 2:
+                // 视频通话消息
+
+                break;
             default:
                 log.error("传入的消息类型错误");
                 break;
