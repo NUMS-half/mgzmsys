@@ -51,8 +51,9 @@ public class TaskController {
      * @return 更新是否成功
      */
     @PostMapping(value = "/updateTask", headers = "Accept=application/json")
-    public ResponseEntity<HttpResponseEntity> updateTask(@RequestBody Map<String, Object> map) {
+    public ResponseEntity<HttpResponseEntity> updateTask(@RequestBody Map<String, Object> map,@RequestHeader("token")String token) throws ParseException {
         map.put("finish_at",new Date());
+        map.put("child_id",JwtUtil.getUidFromToken(token));
         try{
             boolean result = taskService.updateTask(map);
             if ( result ) {
