@@ -1,6 +1,7 @@
 package cn.edu.neu.mgzmsys.service.impl;
 
 import cn.edu.neu.mgzmsys.entity.Task;
+import cn.edu.neu.mgzmsys.entity.TaskChild;
 import cn.edu.neu.mgzmsys.mapper.TaskChildMapper;
 import cn.edu.neu.mgzmsys.mapper.TaskMapper;
 import cn.edu.neu.mgzmsys.service.ITaskService;
@@ -51,7 +52,7 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements IT
      * 查询任务
      */
     @Override
-    public Map<String,Object> selectTask(Map<String, Object> map){
+    public TaskChild selectTask(Map<String, Object> map){
         return taskChildMapper.selectChildTask(map);
     }
 }
