@@ -57,18 +57,13 @@ public class WebSocketServer {
      * 连接建立成功调用的方法
      */
     @OnOpen
-    public void onOpen(Session session, @PathParam("token") String token) throws ParseException {
+    public void onOpen(Session session, @PathParam("token") String token) throws ParseException, IOException {
 
         String userId = JwtUtil.getUidFromToken(token);
 
         // 将新登录的用户session以及id加入sessionMap
         sessionMap.put(userId, session);
         log.info("有新用户(userId:{})加入, 当前在线总人数为:{}", userId, sessionMap.size());
-
-//        // 向客户端返回sessionMap,用于告知用户在线人数
-//        JSONObject jsonObject = new JSONObject(sessionMap);
-//        jsonObject.set("responseType", "0"); // 响应信息类型：0-在线人数
-//        sendMessage(jsonObject.toString(), session);
 
         // 设置session的过期时间
         startSessionTimeoutTask(userId);
@@ -80,7 +75,7 @@ public class WebSocketServer {
             while ( !messageQueue.isEmpty() ) {
                 Message message = messageQueue.poll();
                 // 处理消息，判断目标用户是否在线
-                this.processMessage(message);
+                this.processMessage(session, message);
             }
         }
     }
@@ -99,7 +94,7 @@ public class WebSocketServer {
      * 收到客户端消息后调用的方法
      */
     @OnMessage
-    public void onMessage(String message, Session session, @PathParam("token") String token) throws ParseException {
+    public void onMessage(String message, Session session, @PathParam("token") String token) throws ParseException, IOException {
         String userId = JwtUtil.getUidFromToken(token);
         log.info("服务器收到用户(username:{})的消息:{}", userId, message);
 
@@ -117,7 +112,7 @@ public class WebSocketServer {
         sendMessage.setMessageStatus(obj.getInt("messageStatus"));
 
         // 处理该消息
-        this.processMessage(sendMessage);
+        this.processMessage(session, sendMessage);
     }
 
     /**
@@ -132,7 +127,7 @@ public class WebSocketServer {
     /**
      * 消息处调用的方法
      */
-    private void processMessage(Message message) {
+    private void processMessage(Session session, Message message) throws IOException {
 
         // 消息状态码：0-已发送的消息，1-离线消息，2-已接收的消息
 
@@ -156,8 +151,9 @@ public class WebSocketServer {
                         jsonObject.set("messageStatus", message.getMessageStatus());
                         jsonObject.set("messageTime", message.getMessageTime().toString());
                         sendMessage(jsonObject.toString(), toSession);
-                        log.info("发送给用户(userId:{}), 消息: {}", receiveUserId, jsonObject);
+                        log.info("发送给用户(userId:{}), 文字消息: {}", receiveUserId, jsonObject);
                     } else if ( message.getMessageStatus() == 0 ) {
+                        message.setMessageStatus(2);
                         if ( messageService.saveMessage(message) ) {
                             log.info("新保存的消息ID：" + message.getMessageId());
                             jsonObject.set("responseType", "1"); // 响应信息类型：1-文字消息
@@ -165,7 +161,7 @@ public class WebSocketServer {
                             jsonObject.set("messageStatus", 2);
                             jsonObject.set("messageTime", message.getMessageTime().toString());
                             sendMessage(jsonObject.toString(), toSession);
-                            log.info("发送给用户(userId:{}), 消息: {}", receiveUserId, jsonObject);
+                            log.info("发送给用户(userId:{}), 文字消息: {}", receiveUserId, jsonObject);
                         } else {
                             log.error("消息保存失败");
                         }
@@ -180,48 +176,46 @@ public class WebSocketServer {
                     log.info("用户(userId:{})不在线，消息推送至MQ", receiveUserId);
                 }
                 break;
-//            case 1:
-//                // 文件消息(messageBody为文件名才可以!!!!!!)
-//                if ( messageService.saveMessage(message) ) {
-//                    System.out.println("新保存的消息ID：" + message.getMessageId());
-//                    log.info("消息保存数据库成功");
-//                    jsonObject.set("messageId", message.getMessageId());
-//                    jsonObject.set("messageTime", message.getMessageTime().toString());
-//                    jsonObject.set("messageBody", FileController.FILE_UPLOAD_DIRECTORY +
-//                            message.getConversationId() + "/" + message.getMessageBody());
-//                    if ( toSession != null ) {
-//                        jsonObject.set("responseType", "2"); // 响应信息类型：2-文件消息
-//                        sendMessage(jsonObject.toString(), toSession);
-//                        log.info("发送给用户(userId:{}), 文件消息: {}", receiveUserId, jsonObject);
-//                    } else {
-//                        messageService.handleSentMessage(message);
-//                        log.info("用户(userId:{})不在线，消息推送至MQ", receiveUserId);
-//                    }
-//                } else {
-//                    log.error("消息保存失败");
-//                }
-//                break;
             case 1:
-                // 文件消息(messageBody为文件名才可以!!!!!!)
-                if ( messageService.saveMessage(message) ) {
-                    System.out.println("新保存的消息ID：" + message.getMessageId());
-                    log.info("消息保存数据库成功");
-                    jsonObject.set("messageId", message.getMessageId());
-                    jsonObject.set("messageTime", message.getMessageTime().toString());
-                    jsonObject.set("messageBody", FileController.FILE_UPLOAD_DIRECTORY +
-                            message.getConversationId() + "/" + message.getMessageBody());
-                    if ( toSession != null ) {
+                if ( toSession != null ) {
+                    // 用户在线，消息保存到数据库，并推送给目标用户
+                    if ( message.getMessageStatus() == 1 ) {
+                        message.setMessageStatus(2);
+                        messageService.updateById(message);
+                        log.info("更新的消息ID：" + message.getMessageId());
                         jsonObject.set("responseType", "2"); // 响应信息类型：2-文件消息
+                        jsonObject.set("messageId", message.getMessageId());
+                        jsonObject.set("messageStatus", message.getMessageStatus());
+                        jsonObject.set("messageTime", message.getMessageTime().toString());
+                        jsonObject.set("messageBody", FileController.FILE_UPLOAD_DIRECTORY +
+                                message.getMessageId() + "/" + message.getMessageBody());
                         sendMessage(jsonObject.toString(), toSession);
                         log.info("发送给用户(userId:{}), 文件消息: {}", receiveUserId, jsonObject);
-                    } else {
-                        messageService.handleSentMessage(message);
-                        log.info("用户(userId:{})不在线，消息推送至MQ", receiveUserId);
+                    } else if ( message.getMessageStatus() == 0 ) {
+                        if ( messageService.saveMessage(message) ) {
+                            log.info("新保存的消息ID：" + message.getMessageId());
+                            jsonObject.set("responseType", "2"); // 响应信息类型：2-文件消息
+                            jsonObject.set("messageId", message.getMessageId());
+                            jsonObject.set("messageStatus", 2);
+                            jsonObject.set("messageTime", message.getMessageTime().toString());
+                            jsonObject.set("messageBody", "http://localhost:8080/file/download?" +
+                                    FileController.FILE_UPLOAD_DIRECTORY +
+                                    message.getMessageId() + "/" + message.getMessageBody());
+                            sendMessage(jsonObject.toString(), toSession); // 发送给目标用户
+                            log.info("发送给用户(userId:{}), 文件消息: {}", receiveUserId, jsonObject);
+                        } else {
+                            log.error("消息保存失败");
+                        }
                     }
                 } else {
-                    log.error("消息保存失败");
+                    // 用户不在线，将消息存储到MQ中
+                    if ( message.getMessageStatus() == 0 ) {
+                        message.setMessageStatus(1);
+                        messageService.saveMessage(message);
+                    }
+                    messageService.handleSentMessage(message);
+                    log.info("用户(userId:{})不在线，消息推送至MQ", receiveUserId);
                 }
-                break;
             case 2:
                 // 视频通话消息
 

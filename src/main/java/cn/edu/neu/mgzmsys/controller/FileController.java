@@ -12,7 +12,7 @@ import java.nio.file.Files;
 @RequestMapping("/file")
 public class FileController {
 
-    public static final String FILE_UPLOAD_DIRECTORY = "D:/mgzm/file_upload/message_files";
+    public static final String FILE_UPLOAD_DIRECTORY = "D:/mgzm/file_upload/message_files/";
 
     @PostMapping(value = "/upload", headers = "Accept=application/json")
     public ResponseEntity<HttpResponseEntity> uploadFile(@RequestBody String messageId, @RequestBody MultipartFile file) {
@@ -48,23 +48,19 @@ public class FileController {
 
         // 创建文件对象
         File file = new File(filePath);
-
         // 文件不存在
         if ( !file.exists() ) {
             return HttpResponseEntity.GET_FAIL.toResponseEntity();
         }
-
         try {
             // 读取文件内容
             byte[] fileBytes = Files.readAllBytes(file.toPath());
             long fileSize = file.length();
-
 //            // 设置响应头部信息
 //            HttpHeaders headers = new HttpHeaders();
 //            headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
 //            headers.setContentDispositionFormData("attachment", fileName);
 //            headers.setContentLength(fileSize);
-
             // 返回响应
             return new HttpResponseEntity().get(fileBytes).toResponseEntity();
         } catch ( Exception e ) {
