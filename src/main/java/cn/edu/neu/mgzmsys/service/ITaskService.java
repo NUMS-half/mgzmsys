@@ -1,6 +1,7 @@
 package cn.edu.neu.mgzmsys.service;
 
 import cn.edu.neu.mgzmsys.entity.Task;
+import cn.edu.neu.mgzmsys.entity.TaskChild;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 import java.util.List;
@@ -26,5 +27,5 @@ public interface ITaskService extends IService<Task> {
      */
     boolean updateTask(Map<String, Object> map);
 
-    Map<String,Object> selectTask(Map<String, Object> map);
+    TaskChild selectTask(Map<String, Object> map);
 }

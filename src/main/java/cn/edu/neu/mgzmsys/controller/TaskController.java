@@ -4,6 +4,7 @@ package cn.edu.neu.mgzmsys.controller;
 import cn.edu.neu.mgzmsys.common.utils.JwtUtil;
 import cn.edu.neu.mgzmsys.entity.HttpResponseEntity;
 import cn.edu.neu.mgzmsys.entity.Task;
+import cn.edu.neu.mgzmsys.entity.TaskChild;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -66,7 +67,7 @@ public class TaskController {
     /**
      * 查询任务
      */
-    @GetMapping(value = "/taskDetail", headers = "Accept=application/json")
+    @PostMapping(value = "/taskDetail", headers = "Accept=application/json")
     public ResponseEntity<HttpResponseEntity> selectTask(@RequestBody String taskId,@RequestHeader("token")String token) throws ParseException {
         String id = JwtUtil.getUidFromToken(token);
         try{
@@ -76,11 +77,8 @@ public class TaskController {
             Map<String,Object> map = new HashMap<>();
             map.put("child_id",id);
             map.put("task_id",taskId);
-            Map<String,Object> result = taskService.selectTask(map);
-            if ( result == null ) {
-                return HttpResponseEntity.GET_FAIL.toResponseEntity();
-            }
-            return  new HttpResponseEntity().get(map).toResponseEntity();
+            TaskChild result = taskService.selectTask(map);
+            return  new HttpResponseEntity().get(result).toResponseEntity();
         } catch ( Exception e ) {
             return HttpResponseEntity.ERROR.toResponseEntity();
         }

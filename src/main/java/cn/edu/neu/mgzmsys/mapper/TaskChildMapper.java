@@ -1,6 +1,7 @@
 package cn.edu.neu.mgzmsys.mapper;
 
 import cn.edu.neu.mgzmsys.entity.Message;
+import cn.edu.neu.mgzmsys.entity.TaskChild;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
 
@@ -13,5 +14,5 @@ public interface TaskChildMapper  {
     /**
      * 查询任务
      */
-    Map<String,Object> selectChildTask(Map<String, Object> map);
+    TaskChild selectChildTask(Map<String, Object> map);
 }

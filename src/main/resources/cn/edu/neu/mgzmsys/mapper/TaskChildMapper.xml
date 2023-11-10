@@ -1,19 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="cn.edu.neu.mgzmsys.mapper.TaskChildMapper">
-
+<!--    TaskChild类和child——task表的resultMap-->
+    <resultMap id="childtaskmap" type="cn.edu.neu.mgzmsys.entity.TaskChild">
+        <id column="task_id" property="taskId"/>
+        <id column="child_id" property="childId"/>
+        <result column="volunteer_id" property="volunteerId"/>
+        <result column="answer" property="answer"/>
+        <result column="finish_at" property="finishAt"/>
+        <result column="response" property="response"/>
+        <result column="response_at" property="responseAt"/>
+    </resultMap>
 
     <update id="updateChildTask" parameterType="java.util.Map">
-  UPDATE child_task
-  <set>
-    <!-- 使用动态语句根据传入的 Map 决定更新哪些字段 -->
-   <if test="answer != null">answer = #{answer},</if>
-    <if test="finish_at != null">finish_at = #{finish_at},</if>
-    <!-- 继续添加其他需要更新的字段 -->
-  </set>
-  WHERE task_id = #{task_id} AND child_id = #{user_id}
+         UPDATE child_task
+    <set>
+        <!-- 使用动态语句根据传入的 Map 决定更新哪些字段 -->
+     <if test="answer != null">answer = #{answer},</if>
+     <if test="finish_at != null">finish_at = #{finish_at},</if>
+     <!-- 继续添加其他需要更新的字段 -->
+     </set>
+      WHERE task_id = #{task_id} AND child_id = #{user_id}
     </update>
-    <select id="selectChildTask" resultType="java.util.Map" parameterType="java.util.Map">
+    <select id="selectChildTask" resultMap="childtaskmap" parameterType="java.util.Map">
         SELECT * FROM child_task WHERE task_id = #{task_id} AND child_id = #{child_id}
     </select>
 </mapper>
