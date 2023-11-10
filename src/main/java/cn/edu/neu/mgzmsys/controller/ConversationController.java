@@ -97,5 +97,26 @@ public class ConversationController {
             return HttpResponseEntity.ERROR.toResponseEntity();
         }
     }
+
+
+    @PostMapping(value = "/setup", headers = "Accept=application/json")
+    public ResponseEntity<HttpResponseEntity> setupConversation(@RequestBody String participantId2, @RequestHeader("token") String token) {
+        try {
+            String participantId1 = JwtUtil.getUidFromToken(token);
+            if (participantId1.equals(participantId2)) {
+                return new HttpResponseEntity().get("不能添加自己为好友！").toResponseEntity();
+            }
+            Map<String, String> map = new HashMap<>();
+            map.put("participation1", participantId1);
+            map.put("participation2", participantId2);
+            if (conversationService.setupConversation(map) ) {
+                return new HttpResponseEntity().get("添加好友成功！").toResponseEntity();
+            } else {
+                return new HttpResponseEntity().get("你们已经是好友了哦！").toResponseEntity();
+            }
+        } catch ( Exception e ) {
+            return HttpResponseEntity.ERROR.toResponseEntity();
+        }
+    }
 }
 

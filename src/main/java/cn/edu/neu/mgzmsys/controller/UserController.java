@@ -107,8 +107,8 @@ public class UserController {
      *
      * @return 用户信息
      */
-    @GetMapping(value = "/searchUserInfo", headers = "Accept=application/json")
-    public ResponseEntity<HttpResponseEntity> getUserInfo(@RequestBody String name) throws ParseException {
+    @PostMapping(value = "/searchUserInfo", headers = "Accept=application/json")
+    public ResponseEntity<HttpResponseEntity> getUserInfo(@RequestBody String name) {
         try {
             // 查询用户信息逻辑...
             Map<String, Object> userInfo = userService.selectUser(name);
