@@ -5,6 +5,7 @@ import cn.edu.neu.mgzmsys.common.utils.JwtUtil;
 import cn.edu.neu.mgzmsys.entity.HttpResponseEntity;
 import cn.edu.neu.mgzmsys.entity.Message;
 import cn.edu.neu.mgzmsys.service.IMessageService;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
@@ -41,6 +42,27 @@ public class MessageController {
                 throw new NullPointerException();
             }
             return new HttpResponseEntity().get(messageService.selectMessage(conversationId,senderId)).toResponseEntity();
+        } catch ( Exception e ) {
+            return HttpResponseEntity.ERROR.toResponseEntity();
+        }
+    }
+
+    /**
+     * 删除指定messageId的消息
+     */
+    @PostMapping(value = "/delete", headers = "Accept=application/json")
+    public ResponseEntity<HttpResponseEntity> deleteHistoryMessage(@RequestBody String messageId) {
+        try {
+            if ( messageId == null ) {
+                throw new NullPointerException();
+            }
+            QueryWrapper<Message> queryWrapper = new QueryWrapper<>();
+            queryWrapper.eq("message_id", messageId);
+            if ( messageService.remove(queryWrapper) ) {
+                return new HttpResponseEntity().get(messageId).toResponseEntity();
+            } else {
+                return HttpResponseEntity.UPDATE_FAIL.toResponseEntity();
+            }
         } catch ( Exception e ) {
             return HttpResponseEntity.ERROR.toResponseEntity();
         }
