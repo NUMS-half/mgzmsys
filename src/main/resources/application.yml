@@ -37,7 +37,7 @@ mybatis-plus:
     call-setters-on-nulls: false
     map-underscore-to-camel-case: true
     auto-mapping-behavior: full
-    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+#    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
   mapper-locations: classpath:mapper/**/**Mapper.xml
   global-config:
     banner: true
