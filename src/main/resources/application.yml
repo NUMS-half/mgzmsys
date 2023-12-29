@@ -6,7 +6,7 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://39.101.65.147:3306/mgzmsys?characterEncoding=utf-8&autoReconnect=true&failOverReadOnly=false&allowMultiQueries=true
     username: msn
-    password: password
+    password: cht021125
   jackson:
     time-zone: Asia/Shanghai
     date-format: yyyy-MM-dd HH:mm:ss
